@@ -1,0 +1,11 @@
+<button (click)="expanded = !expanded" mat-icon-button>
+    <mat-icon>menu</mat-icon>
+</button>
+<div class="main-layout">
+    <aside class="sidebar" *ngIf="expanded" @slidein>
+        <app-sidebar></app-sidebar>
+    </aside>
+    <section style="font-size:75px;">
+        Hello There
+    </section>
+</div>

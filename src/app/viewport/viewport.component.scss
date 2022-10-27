@@ -1,0 +1,19 @@
+.sidebar {
+    position: relative;
+    width: 250px;
+    height: 90vh;
+    background: #ff2;
+  }
+
+  .main-layout {
+    display: flex;
+    flex-direction: row;
+  }  
+
+  #lateralColumn{
+    height: 95vh;
+    width: 3%;
+    background-color: pink;
+    z-index: 1;
+    position: absolute;
+  }
