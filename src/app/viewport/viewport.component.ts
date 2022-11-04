@@ -25,7 +25,6 @@ export class ViewportComponent implements OnInit {
 
   expanded:boolean = true;
   ngOnInit(): void {
-    this.expanded = false;
   }
 
 

@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {FormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {MatIconModule} from '@angular/material/icon';
+
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -10,7 +13,9 @@ import { TreeColumnComponent } from './tree-column/tree-column/tree-column.compo
 import {ButtonModule} from 'primeng/button';
 import {SidebarModule} from 'primeng/sidebar';
 import {TreeModule} from 'primeng/tree';
-import {MatIconModule} from '@angular/material/icon';
+import {InputTextModule} from 'primeng/inputtext';
+import {TabViewModule} from 'primeng/tabview';
+import {VirtualScrollerModule} from 'primeng/virtualscroller'; 
 
 import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -29,11 +34,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     BrowserAnimationsModule,
     TreeModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     ButtonModule,
     SidebarModule,
     NgbModule,
-    MatIconModule
+    MatIconModule,
+    InputTextModule,
+    ScrollingModule,
+    TabViewModule,
+    VirtualScrollerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
