@@ -1,10 +1,62 @@
-<form>
-  
+<form [formGroup]="cercaEntrataLessicale">
+  <div class="containerFilter grid p-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="p-inputgroup"> 
+          <span class="p-input-icon-right">
+            <i class="pi pi-spin pi-spinner" *ngIf="isLoading"></i>
+            <input type="text" pInputText formControlName="entrataLessicale">
+          </span> 
+          <button type="button" pButton pRipple icon="pi pi-filter-fill" (click)="showFilter()"></button>      
+      </div>
+          <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}}
+      </div>
+    </div>
+
+    <div *ngIf="showF">
+      <div id="radioBtnsGroup">
+        <div class="row up">
+          <div class="col-6">
+            <p-radioButton value="equals" formControlName="selectedFilter"></p-radioButton>
+            <label for="enterFilter">Equals</label>
+          </div>
+          <div class="col-6">
+            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="starts" formControlName="selectedFilter"></p-radioButton>
+            <label for="enterFilter">Stars</label>
+          </div>
+        </div>
+        <div class="row bottom">
+          <div class="col-6">
+            <p-radioButton name="selectedFilter" value="contains" formControlName="selectedFilter"></p-radioButton>
+            <label for="enterFilter">Contains</label>
+          </div>
+          <div class="col-6">
+            <p-radioButton name="selectedFilter" value="ends" formControlName="selectedFilter"></p-radioButton>
+            <label for="enterFilter">Ends</label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <!-- POS -->
+          <p-dropdown placeholder="Pos" optionLabel="name" formControlName="posSelected" [showClear]="true"
+            (onClick)="fetchPos()" [options]="posFetched" (onChange)="callService()"></p-dropdown>
+        </div>
+        <!-- ENTRY -->
+        <div class="col">
+          <p-dropdown [options]="entries" placeholder="Entry" optionLabel="name" [showClear]="true"></p-dropdown>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <p-divider></p-divider>
+   <!-- tree component -->
+  <!-- <p-tree [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" [virtualScroll]="true"  [virtualScrollItemSize]="50" 
+  (onScroll)="onScroll($event)" (onNodeExpand)="nodeSelect($event)">
+</p-tree> -->
+<p-tree [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" (onNodeExpand)="nodeSelect($event)">
+</p-tree>
+ 
 </form>
-  <p-tree 
-  [filter]="true"
-  [value]="sensesFromLexo" 
-  scrollHeight="500px"
-  [virtualScrollItemSize]="40"
-  (onNodeExpand)="nodeSelect($event)"> 
-  </p-tree>

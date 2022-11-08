@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Element } from '../models/element.model';
 import { Forms } from '../models/forms.model';
 import { LexicalEntry } from '../models/lexicalEntry.model';
+import { Pos } from '../models/pos.model';
 import { Sense } from '../models/sense.model';
 
 @Injectable({
@@ -46,4 +47,10 @@ export class DataStorageService {
     return this.http.get<Sense[]>('LexO-backend-beta/service/lexicon/data/'+ idEntrataLessicale +'/senses?key=lexodemo');
   }
 
+  /**
+   * servizio recupero pos per filtro search
+   */
+  fetchPos():Observable<Pos[]>{
+    return this.http.get<Pos[]>('LexO-backend-beta/service/lexicon/statistics/pos?key=lexodemo');
+  }
 }

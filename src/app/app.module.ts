@@ -16,6 +16,9 @@ import {TreeModule} from 'primeng/tree';
 import {InputTextModule} from 'primeng/inputtext';
 import {TabViewModule} from 'primeng/tabview';
 import {VirtualScrollerModule} from 'primeng/virtualscroller'; 
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {DropdownModule} from 'primeng/dropdown';
+import {DividerModule} from 'primeng/divider';
 
 import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -43,7 +46,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     InputTextModule,
     ScrollingModule,
     TabViewModule,
-    VirtualScrollerModule
+    VirtualScrollerModule,
+    RadioButtonModule,
+    DropdownModule,
+    DividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

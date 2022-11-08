@@ -1,9 +1,38 @@
-.entrataL{
-    height: 29px;
-    padding-top: 8px;
-    max-width: 282px;
+$heightInput: 30px;
+$widthInput: 70%;
+
+#radioBtnsGroup {
+    .row.up {
+        .col-6 {
+            padding-top: 10px;
+        }
+    }
+
+    .row.bottom {
+        .col-6 {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    }
 }
 
-.scroll-viewport{
-    height: 100%;
+.p-inputgroup-addon{
+    background: #ffffff;
+}
+.p-inputgroup .p-inputtext, .p-fluid .p-inputgroup .p-inputtext, .p-inputgroup .p-inputwrapper, .p-inputgroup .p-inputwrapper>.p-component{
+    width: 100%;
+    border-radius: 6px 0 0 6px;
+}
+
+::ng-deep.p-tree{
+    border:none;
+    padding: 0;
+}
+
+::ng-deep.p-tabview-panels{
+    height: 86.9vh;
+}
+
+form{
+    height: 84vh;
 }

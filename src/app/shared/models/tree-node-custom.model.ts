@@ -7,16 +7,10 @@ export interface TreeNodeCustom extends TreeNode {
   element: Element[];
   lexicalEntryInstanceName: string | undefined;
   count:number,
-  // elements: [{
-  //   label: string,
-  //   count: number,
-  //   hasChildren: boolean
-  // }];
   creator: string;
   lastUpdate: string;
   creationDate: string;
   senseInstanceName: string;
   formInstanceName: string;
   pos: string;
-  children: TreeNodeCustom[] | undefined;
 }

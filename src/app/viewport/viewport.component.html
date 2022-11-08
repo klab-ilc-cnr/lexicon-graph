@@ -1,12 +1,12 @@
 <div class="main-layout">
     <div id="lateralColumn">
         <button id="button-sidebar" (click)="expanded = !expanded" mat-icon-button>
-            <mat-icon>menu</mat-icon>
+            <i class="pi pi-bars"></i>
         </button>
     </div>
 
-    <div #collapse="ngbCollapse" [(ngbCollapse)]="!expanded" [horizontal]="true" style="max-width: 300px;">
-        <div class="card" style="width: 300px; height: 94.7vh;">
+    <div #collapse="ngbCollapse" [(ngbCollapse)]="!expanded" [horizontal]="true" style="max-width: 350px;">
+        <div class="card" style="width: 350px; height: 94.7vh;">
             <p-tabView>
                 <p-tabPanel header="Lexicon">
                     <app-sidebar></app-sidebar>

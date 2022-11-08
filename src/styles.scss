@@ -5,3 +5,38 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
+
+
+ /* customize scrollbar Chrome */
+
+ *::-webkit-scrollbar {
+    width: 10px;
+    margin-left:5px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 20px;
+  }
+
+  /* Works on Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1 ;
+}
+
+// rimuove stile shadow su focus bottone
+.p-button:focus {
+  box-shadow: none;
+}
+
+.p-inputtext:enabled:focus {
+  outline: 0 none;
+  outline-offset: 0;
+  box-shadow: none;
+  border-color: none;
+}
