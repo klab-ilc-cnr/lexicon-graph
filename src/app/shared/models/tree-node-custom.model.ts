@@ -1,5 +1,4 @@
 import { TreeNode } from "primeng/api";
-import { Forms } from "./forms.model";
 import { LexicalEntry } from "./lexicalEntry.model";
 import { Element } from "./element.model";
 export interface TreeNodeCustom extends TreeNode {

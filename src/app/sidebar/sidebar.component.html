@@ -17,21 +17,21 @@
       <div id="radioBtnsGroup">
         <div class="row up">
           <div class="col-6">
-            <p-radioButton value="equals" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton (onFocus)="onChange($event)" value="equals" name="selectedFilter" formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Equals</label>
           </div>
           <div class="col-6">
-            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="starts" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="startsWith" formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Stars</label>
           </div>
         </div>
         <div class="row bottom">
           <div class="col-6">
-            <p-radioButton name="selectedFilter" value="contains" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="contains" formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Contains</label>
           </div>
           <div class="col-6">
-            <p-radioButton name="selectedFilter" value="ends" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="ends" formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Ends</label>
           </div>
         </div>
@@ -40,11 +40,11 @@
         <div class="col">
           <!-- POS -->
           <p-dropdown placeholder="Pos" optionLabel="name" formControlName="posSelected" [showClear]="true"
-            (onClick)="fetchPos()" [options]="posFetched" (onChange)="callService()"></p-dropdown>
+            (onClick)="fetchPos()" [options]="posFetched" (onChange)="callServicePos()"></p-dropdown>
         </div>
         <!-- ENTRY -->
         <div class="col">
-          <p-dropdown [options]="entries" placeholder="Entry" optionLabel="name" [showClear]="true"></p-dropdown>
+          <p-dropdown (onChange)="callServiceEntry($event)" [options]="entries" placeholder="Entry" optionLabel="name" [showClear]="true"></p-dropdown>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@
   <!-- <p-tree [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" [virtualScroll]="true"  [virtualScrollItemSize]="50" 
   (onScroll)="onScroll($event)" (onNodeExpand)="nodeSelect($event)">
 </p-tree> -->
-<p-tree [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" (onNodeExpand)="nodeSelect($event)">
+<p-tree [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" (onNodeExpand)="nodeSelect($event)" [virtualScrollItemSize]="50"
+ >
 </p-tree>
- 
 </form>

@@ -20,6 +20,7 @@ export class NodeService {
           type: "word",
           pos: lexicalList.pos,
           leaf: false,
+          children: []
         };
         result.push(newEntry)
     });

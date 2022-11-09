@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
@@ -14,6 +15,7 @@ import { NodeService } from '../shared/servizi/node.service';
 export class SidebarComponent implements OnInit, OnDestroy {
 
   sensesFromLexo: TreeNodeCustom[] = [];
+  formsFetched:any = [];
   /**
    * subscription
    */
@@ -66,7 +68,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
      */
     this.cercaEntrataLessicale = this.fb.group({
       entrataLessicale: new FormControl(),
-      selectedFilter: ['starts', []],
+      selectedFilter: ['startsWith', []],
       posSelected: new FormControl(),
     })
   }
@@ -80,10 +82,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       debounceTime(500)
       , distinctUntilChanged()
     ).subscribe((text: string) => {
+      let elFetched: string;
+      this.isLoading = true;
       this.dataStorageService.fetchLexicalEntries(text, this.searchMode, this.type, this.pos,
         this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
-          this.isLoading = true;
-          if (this.cercaEntrataLessicale.get('entrataLessicale').value === '') {
+          this.text = text;
+          if(lexicalEntry){
             this.isLoading = false;
           }
           if (lexicalEntry.list !== undefined) {
@@ -96,39 +100,23 @@ export class SidebarComponent implements OnInit, OnDestroy {
     })
   }
 
-  fetchForms(lexicalEntry, event) {
-    this.sub3 = this.dataStorageService.fetchForms(lexicalEntry).subscribe(el => {
-      let tempEl = el.map(e => {
-        return {
-          collapsedIcon: "pi pi-folder-open",
-          label: e.label,
-          data: e.label,
-          leaf: true
-        }
-      });
-      event.node.children = tempEl
-    })
-  }
-
   onScroll(event: any) {
-    if (event.originalEvent.target.offsetHeight + event.originalEvent.target.scrollTop >= event.originalEvent.target.scrollHeight - 1) {
-        this.retrieveSenses();
+    if (event.originalEvent.target.offsetHeight + event.originalEvent.target.scrollTop >= event.originalEvent.target.scrollHeight) {
+      this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+        this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
+          this.isLoading = true;
+          if (this.cercaEntrataLessicale.get('entrataLessicale').value === '') {
+            this.isLoading = false;
+          }
+          if (lexicalEntry.list !== undefined) {
+            this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
+          }
+          this.totalCount = lexicalEntry.totalHits;
+          this.limit += 99;
+          this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
+        });
     }
   }
-
-  // fetchSenses(lexicalEntry, event) {
-  //   this.sub3 = this.dataStorageService.fetchSense(lexicalEntry).subscribe(el => {
-  //     let tempEl = el.map(e => {
-  //       return {
-  //         collapsedIcon:"pi pi-folder-open",
-  //         label: e.label,
-  //         data: e.label,
-  //         leaf: true
-  //       }
-  //     });
-  //     event.node.children = tempEl
-  //   })
-  // }
 
   retrieveSenses() {
     this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
@@ -147,7 +135,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
    * @param event espansione nodo per aprire children alberatura
    */
   nodeSelect(event) {
-    let idNode = event.node.data
+    let idNode = event.node.data;
     this.sub2 = this.dataStorageService.fetchElements(idNode).subscribe(el => {
       el.elements.forEach(elemento => {
         if (elemento.label === 'form' && elemento.count > 0) {
@@ -157,8 +145,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
             expandedIcon: "pi pi-folder-open",
             label: elemento.label + ' (' + elemento.count + ')',
             leaf: false,
-            children: [{
-            }]
+            children: []
           }]
           event.node.children = tempForm;
           this.dataStorageService.fetchForms(idNode).subscribe(el => {
@@ -182,10 +169,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
             expandedIcon: "pi pi-folder-open",
             label: elemento.label + ' (' + elemento.count + ')',
             leaf: false,
-            children: [{
-            }]
+            children: []
           }]
-          event.node.children = tempSense;
+  
+          event.node.children = [...event.node.children, ...tempSense];
+  
           this.dataStorageService.fetchSense(idNode).subscribe(el => {
             let childrenSense = el.map(e => {
               return {
@@ -214,7 +202,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     })
   }
 
-  callService() {
+  callServicePos() {
     let posSel: any = { name: '' };
     if (this.cercaEntrataLessicale.get('posSelected').value !== null) {
       posSel = this.cercaEntrataLessicale.get('posSelected').value.name
@@ -224,6 +212,81 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.pos = posSel;
     this.retrieveSenses();
   }
+
+  callServiceEntry(e){
+    let elFetched:string;
+    // toglie errore 
+    if(e.value !== null){
+      if(e.value.name === 'entry'){
+        this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+          this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+            if (lexicalEntry.list !== undefined) {
+              this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
+            }
+          })
+      }
+      if(e.value.name === 'flexed'){
+        // espando nodi parent
+        this.expandAll();
+        let alberatura =[];
+        this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+          this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+            lexicalEntry.list.forEach(el=>{
+              alberatura.push(el)
+              if(el.label === this.text){ 
+                elFetched = el.lexicalEntryInstanceName;
+              }
+              return elFetched;
+            })
+            this.dataStorageService.fetchElements(elFetched).subscribe(el => {
+              el.elements.forEach(elemento => {
+                if (elemento.label === 'form') {
+                  let tempForm = [{
+                    collapsedIcon: "pi pi-folder",
+                    expandedIcon: "pi pi-folder-open",
+                    data: elemento.label + ' (' + elemento.count + ')',
+                    leaf: false,
+                    children: [{
+                    }]
+                  }]
+                  
+                  alberatura.push(tempForm);
+                  // this.expandAll();
+                  alberatura.forEach( node => {
+                    this.expandRecursive(node, true);
+                } );
+                //   this.dataStorageService.fetchForms(elFetched).subscribe(el => {
+                //     this.formsFetched.push(el)
+                //     el.forEach(node=>{
+                //       this.expandRecursive(node, true);
+                //     })
+  
+                //   })
+                //   this.formsFetched.forEach( node => {
+                //     this.expandRecursive(node, true);
+                // } );
+                }
+              })
+            })
+          })
+      }
+    }
+
+  }
+  expandAll(){
+    this.sensesFromLexo.forEach( node => {
+        this.expandRecursive(node, true);
+    } );
+}
+
+  private expandRecursive(node:TreeNode, isExpand:boolean){
+    node.expanded = isExpand;
+    if (node.children){
+        node.children.forEach( childNode => {
+            this.expandRecursive(childNode, isExpand);
+        } );
+    }
+}
 
   showFilter() {
     this.showF = !this.showF;
@@ -235,11 +298,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   onChange(e) {
-    this.type = e.target.value;
-    console.log('on change .target.value ')
-    console.log(e.target.value)
+    this.searchMode = e.target.value;
+    this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+      this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
+        if (lexicalEntry.list !== undefined) {
+          this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
+        }
+        this.totalCount = lexicalEntry.totalHits;
+        this.limit += 99;
+        this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
+      })
   }
-
   /**
    * unsubscribe subscriptions
    */
