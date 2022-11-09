@@ -1,5 +1,4 @@
-$heightInput: 30px;
-$widthInput: 70%;
+$colorIcon: #999999;
 
 #radioBtnsGroup {
     .row.up {
@@ -35,4 +34,9 @@ $widthInput: 70%;
 
 form{
     height: 84vh;
+}
+
+button#btnIcon{
+    background-color: $colorIcon;
+    border-color: $colorIcon;
 }

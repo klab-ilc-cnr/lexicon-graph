@@ -72,6 +72,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       entrataLessicale: new FormControl(),
       selectedFilter: ['startsWith', []],
       posSelected: new FormControl(),
+      entrySelected: new FormControl()
     })
   }
 
@@ -220,28 +221,28 @@ export class SidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  private expandChildren(element) {
-    this.sub2 = this.dataStorageService.fetchElements(element).subscribe(el => {
-      el.elements.forEach(elemento => {
-        if (elemento.label === 'form') {
-          // recupero forme
-          let tempForm = [{
-            collapsedIcon: "pi pi-folder",
-            expandedIcon: "pi pi-folder-open",
-            label: elemento.label + ' (' + elemento.count + ')',
-            leaf: false,
-            children: []
-          }]
-          element.children = tempForm;
-          // chiamata metodo privato
-          let childrenForm = this.addFormChildren(element);
-          tempForm.forEach(el => {
-            el.children = childrenForm;
-          })
-        }
-      })
-    })
-  }
+  // private expandChildren(element) {
+  //   this.sub2 = this.dataStorageService.fetchElements(element).subscribe(el => {
+  //     el.elements.forEach(elemento => {
+  //       if (elemento.label === 'form') {
+  //         // recupero forme
+  //         let tempForm = [{
+  //           collapsedIcon: "pi pi-folder",
+  //           expandedIcon: "pi pi-folder-open",
+  //           label: elemento.label + ' (' + elemento.count + ')',
+  //           leaf: false,
+  //           children: []
+  //         }]
+  //         element.children = tempForm;
+  //         // chiamata metodo privato
+  //         let childrenForm = this.addFormChildren(element);
+  //         tempForm.forEach(el => {
+  //           el.children = childrenForm;
+  //         })
+  //       }
+  //     })
+  //   })
+  // }
 
   fetchPos() {
     this.sub4 = this.dataStorageService.fetchPos().subscribe(el => {
@@ -328,6 +329,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
     } else {
       this.scrollHeight = '500px';
     }
+  }
+
+  resetFilter() {
+    this.cercaEntrataLessicale.get('entrataLessicale').setValue('');
+    this.cercaEntrataLessicale.get('selectedFilter').setValue('startsWith');
+    this.cercaEntrataLessicale.get('posSelected').setValue('');
+    this.cercaEntrataLessicale.get('entrySelected').setValue('');
+    this.searchMode = "startsWith";
+    this.text = "*";
+    this.pos = "";
   }
 
   onChange(e) {

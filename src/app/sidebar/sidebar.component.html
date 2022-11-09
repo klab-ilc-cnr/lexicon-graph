@@ -7,7 +7,8 @@
             <i class="pi pi-spin pi-spinner" *ngIf="isLoading"></i>
             <input type="text" pInputText formControlName="entrataLessicale">
           </span> 
-          <button type="button" pButton pRipple icon="pi pi-filter-fill" (click)="showFilter()"></button>      
+          <button pTooltip="show/hide filter" tooltipPosition="bottom" type="button" pButton pRipple icon="pi pi-filter-fill" (click)="showFilter()"></button>
+          <button pTooltip="refresh form" tooltipPosition="bottom" id="btnIcon" type="button" pButton pRipple icon="pi pi-refresh" (click)="resetFilter()"></button>
       </div>
           <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}}
       </div>
@@ -39,12 +40,25 @@
       <div class="row">
         <div class="col">
           <!-- POS -->
-          <p-dropdown placeholder="Pos" optionLabel="name" formControlName="posSelected" [showClear]="true"
-            (onClick)="fetchPos()" [options]="posFetched" (onChange)="callServicePos()"></p-dropdown>
+          <p-dropdown 
+          placeholder="Pos" 
+          optionLabel="name" 
+          formControlName="posSelected" 
+          [showClear]="true"
+          (onClick)="fetchPos()" 
+          [options]="posFetched" 
+          (onChange)="callServicePos()"></p-dropdown>
         </div>
         <!-- ENTRY -->
         <div class="col">
-          <p-dropdown (onChange)="callServiceEntry($event)" [options]="entries" placeholder="Entry" optionLabel="name" [showClear]="true"></p-dropdown>
+          <p-dropdown 
+          (onChange)="callServiceEntry($event)" 
+          [options]="entries" 
+          placeholder="Entry" 
+          optionLabel="name" 
+          [showClear]="true"
+          formControlName="entrySelected"
+          ></p-dropdown>
         </div>
       </div>
     </div>

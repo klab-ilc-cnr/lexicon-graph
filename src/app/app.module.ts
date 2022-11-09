@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import {MatIconModule} from '@angular/material/icon';
 
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,10 +18,12 @@ import {RadioButtonModule} from 'primeng/radiobutton';
 import {DropdownModule} from 'primeng/dropdown';
 import {DividerModule} from 'primeng/divider';
 import {ScrollerModule} from 'primeng/scroller'
+import {TooltipModule} from 'primeng/tooltip';
 
 import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 @NgModule({
   declarations: [
@@ -45,9 +48,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     RadioButtonModule,
     DropdownModule,
     DividerModule,
-    ScrollerModule
+    ScrollerModule,
+    FontAwesomeModule,
+    TooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+
+export class AppModule {
+   constructor(library: FaIconLibrary) {
+
+   }
+ }
