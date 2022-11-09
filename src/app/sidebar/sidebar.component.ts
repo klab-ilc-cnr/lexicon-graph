@@ -15,7 +15,7 @@ import { NodeService } from '../shared/servizi/node.service';
 export class SidebarComponent implements OnInit, OnDestroy {
 
   sensesFromLexo: TreeNodeCustom[] = [];
-  formsFetched:any = [];
+  formsFetched: any = [];
   /**
    * subscription
    */
@@ -58,6 +58,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   posFetched = [];
 
+  elFetched: string;
+
   constructor(
     private dataStorageService: DataStorageService,
     private nodeService: NodeService,
@@ -82,12 +84,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       debounceTime(500)
       , distinctUntilChanged()
     ).subscribe((text: string) => {
-      let elFetched: string;
+      // let elFetched: string;
       this.isLoading = true;
       this.dataStorageService.fetchLexicalEntries(text, this.searchMode, this.type, this.pos,
         this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
           this.text = text;
-          if(lexicalEntry){
+          if (lexicalEntry) {
             this.isLoading = false;
           }
           if (lexicalEntry.list !== undefined) {
@@ -96,6 +98,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.totalCount = lexicalEntry.totalHits;
           this.limit += 99;
           this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
+          lexicalEntry.list.forEach(entrataL => {
+            if (entrataL.label === this.text) {
+              this.elFetched = entrataL.lexicalEntryInstanceName;
+            }
+          })
+          return this.elFetched;
         });
     })
   }
@@ -131,6 +139,44 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * metodo che restituisce children form 
+   * @param idNode nodo parent
+   * @returns array di figli di tipo form
+   */
+  private addFormChildren(idNode) {
+    let childrenForm = [];
+    this.dataStorageService.fetchForms(idNode).subscribe(el => {
+      el.forEach(e => {
+        childrenForm.push(e);
+        return {
+          collapsedIcon: "pi pi-folder-open",
+          label: e.label,
+          data: e.label,
+          type: e.type,
+          leaf: true
+        }
+      });
+    });
+    return childrenForm;
+  }
+
+  private addSenseChildren(idNode) {
+    let childrenSense = [];
+    this.dataStorageService.fetchSense(idNode).subscribe(el => {
+      el.forEach(e => {
+        childrenSense.push(e);
+        return {
+          collapsedIcon: "pi pi-folder-open",
+          label: e.label,
+          data: e.label,
+          leaf: true
+        }
+      });
+    });
+    return childrenSense;
+  }
+
+  /**
    * 
    * @param event espansione nodo per aprire children alberatura
    */
@@ -148,18 +194,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
             children: []
           }]
           event.node.children = tempForm;
-          this.dataStorageService.fetchForms(idNode).subscribe(el => {
-            let childrenForm = el.map(e => {
-              return {
-                collapsedIcon: "pi pi-folder-open",
-                label: e.label,
-                data: e.label,
-                leaf: true
-              }
-            });
-            tempForm.forEach(el => {
-              el.children = childrenForm;
-            })
+          // chiamata metodo privato
+          let childrenForm = this.addFormChildren(idNode);
+          tempForm.forEach(el => {
+            el.children = childrenForm;
           })
         }
         if (elemento.label === 'sense' && elemento.count > 0) {
@@ -171,25 +209,38 @@ export class SidebarComponent implements OnInit, OnDestroy {
             leaf: false,
             children: []
           }]
-  
+
           event.node.children = [...event.node.children, ...tempSense];
-  
-          this.dataStorageService.fetchSense(idNode).subscribe(el => {
-            let childrenSense = el.map(e => {
-              return {
-                collapsedIcon: "pi pi-folder-open",
-                label: e.label,
-                data: e.label,
-                leaf: true
-              }
-            });
-            tempSense.forEach(el => {
-              el.children = childrenSense;
-            })
+          let childrenSense = this.addSenseChildren(idNode);
+          tempSense.forEach(el => {
+            el.children = childrenSense;
           })
         }
       })
     });
+  }
+
+  private expandChildren(element) {
+    this.sub2 = this.dataStorageService.fetchElements(element).subscribe(el => {
+      el.elements.forEach(elemento => {
+        if (elemento.label === 'form') {
+          // recupero forme
+          let tempForm = [{
+            collapsedIcon: "pi pi-folder",
+            expandedIcon: "pi pi-folder-open",
+            label: elemento.label + ' (' + elemento.count + ')',
+            leaf: false,
+            children: []
+          }]
+          element.children = tempForm;
+          // chiamata metodo privato
+          let childrenForm = this.addFormChildren(element);
+          tempForm.forEach(el => {
+            el.children = childrenForm;
+          })
+        }
+      })
+    })
   }
 
   fetchPos() {
@@ -213,11 +264,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.retrieveSenses();
   }
 
-  callServiceEntry(e){
-    let elFetched:string;
+  callServiceEntry(e) {
     // toglie errore 
-    if(e.value !== null){
-      if(e.value.name === 'entry'){
+    if (e.value !== null) {
+      if (e.value.name === 'entry') {
         this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
           this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
             if (lexicalEntry.list !== undefined) {
@@ -225,72 +275,55 @@ export class SidebarComponent implements OnInit, OnDestroy {
             }
           })
       }
-      if(e.value.name === 'flexed'){
+      if (e.value.name === 'flexed') {
         // espando nodi parent
-        this.expandAll();
-        let alberatura =[];
-        this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-          this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
-            lexicalEntry.list.forEach(el=>{
-              alberatura.push(el)
-              if(el.label === this.text){ 
-                elFetched = el.lexicalEntryInstanceName;
-              }
-              return elFetched;
-            })
-            this.dataStorageService.fetchElements(elFetched).subscribe(el => {
-              el.elements.forEach(elemento => {
-                if (elemento.label === 'form') {
-                  let tempForm = [{
-                    collapsedIcon: "pi pi-folder",
-                    expandedIcon: "pi pi-folder-open",
-                    data: elemento.label + ' (' + elemento.count + ')',
-                    leaf: false,
-                    children: [{
-                    }]
-                  }]
-                  
-                  alberatura.push(tempForm);
-                  // this.expandAll();
-                  alberatura.forEach( node => {
-                    this.expandRecursive(node, true);
-                } );
-                //   this.dataStorageService.fetchForms(elFetched).subscribe(el => {
-                //     this.formsFetched.push(el)
-                //     el.forEach(node=>{
-                //       this.expandRecursive(node, true);
-                //     })
-  
-                //   })
-                //   this.formsFetched.forEach( node => {
-                //     this.expandRecursive(node, true);
-                // } );
-                }
+        this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
+          el.elements.forEach(elemento => {
+            if (elemento.label === 'form' && elemento.count > 0) {
+              // recupero forme
+              let tempForm = [{
+                collapsedIcon: "pi pi-folder",
+                expandedIcon: "pi pi-folder-open",
+                label: elemento.label + ' (' + elemento.count + ')',
+                leaf: false,
+                children: []
+              }]
+              this.sensesFromLexo.forEach(el => {
+                el.children = tempForm
               })
-            })
+              this.sensesFromLexo.forEach(node => {
+                this.expandRecursive(node, true);
+              });
+              // chiamata metodo privato
+              let childrenForm = this.addFormChildren(this.elFetched);
+              tempForm.forEach(el => {
+                el.children = childrenForm;
+              })
+            }
           })
+        });
       }
+    } else {
+      // collapse nodi espansi
+      this.sensesFromLexo.forEach(node => {
+        this.expandRecursive(node, false);
+      });
     }
 
   }
-  expandAll(){
-    this.sensesFromLexo.forEach( node => {
-        this.expandRecursive(node, true);
-    } );
-}
 
-  private expandRecursive(node:TreeNode, isExpand:boolean){
+  private expandRecursive(node: TreeNode, isExpand: boolean) {
     node.expanded = isExpand;
-    if (node.children){
-        node.children.forEach( childNode => {
-            this.expandRecursive(childNode, isExpand);
-        } );
+    if (node.children) {
+      node.children.forEach(childNode => {
+        this.expandRecursive(childNode, isExpand);
+      });
     }
-}
+  }
 
   showFilter() {
     this.showF = !this.showF;
-    if(this.showF===true){
+    if (this.showF === true) {
       this.scrollHeight = '370px';
     } else {
       this.scrollHeight = '500px';
