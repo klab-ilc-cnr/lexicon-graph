@@ -1,33 +1,20 @@
 export interface Forms {
+  confidence: number,
+  creationDate: string,
   creator: string,
-  lastUpdate : string,
-  creationDate : string,
-  confidence : number,
-  type : string,
-  label : string,
-  note : string,
-  phoneticRep : string,
-  morphology : [ {
-    trait : string,
-    value : string,
-  }, {
-    trait : string,
-    value : string
-  }, {
-    trait : string,
-    value : string,
-  }, {
-    trait : string,
-    value : string,
-  }, {
-    trait : string,
-    value : string,
-  } ],
-  form : string,
-  formInstanceName : string,
-  lexicalEntry : string,
-  lexicalEntryInstanceName : string,
-  targetSense : string,
-  targetSenseInstanceName : string
-
+  form: string,
+  formInstanceName: string,
+  label: string,
+  lastUpdate: string,
+  lexicalEntry: string,
+  lexicalEntryInstanceName: string,
+  morphology: [{
+    trait: string,
+    value: string,
+  }],
+  note: string,
+  phoneticRep: string,
+  targetSense: string,
+  targetSenseInstanceName: string,
+  type: string
 }

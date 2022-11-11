@@ -40,3 +40,7 @@ button#btnIcon{
     background-color: $colorIcon;
     border-color: $colorIcon;
 }
+
+::ng-deep.p-treenode-content{
+    padding: 0!important; 
+}

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import {MatIconModule} from '@angular/material/icon';
 
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 
@@ -19,6 +18,8 @@ import {DropdownModule} from 'primeng/dropdown';
 import {DividerModule} from 'primeng/divider';
 import {ScrollerModule} from 'primeng/scroller'
 import {TooltipModule} from 'primeng/tooltip';
+import {ScrollPanelModule} from 'primeng/scrollpanel';
+import {DragDropModule} from 'primeng/dragdrop';
 
 import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -42,7 +43,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ButtonModule,
     SidebarModule,
     NgbModule,
-    MatIconModule,
     InputTextModule,
     TabViewModule,
     RadioButtonModule,
@@ -50,7 +50,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     DividerModule,
     ScrollerModule,
     FontAwesomeModule,
-    TooltipModule
+    TooltipModule,
+    ScrollPanelModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -12,4 +12,5 @@ export interface TreeNodeCustom extends TreeNode {
   senseInstanceName: string;
   formInstanceName: string;
   pos: string;
+  type:string;
 }

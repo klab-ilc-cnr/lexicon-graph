@@ -13,11 +13,9 @@ export class NodeService {
     let result: TreeNodeCustom[] = [];
     lexEntryList.list.forEach(lexicalList => {
         let newEntry = <TreeNodeCustom>{
-          expandedIcon: "pi pi-folder-open",
-          collapsedIcon: "pi pi-folder",
           label: lexicalList.label,
           data: lexicalList.lexicalEntryInstanceName,
-          type: "word",
+          type: 'parentLevel',
           pos: lexicalList.pos,
           leaf: false,
           children: []

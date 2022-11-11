@@ -66,11 +66,25 @@
 
   </div>
   <p-divider></p-divider>
-   <!-- tree component -->
-  <!-- <p-tree [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" [virtualScroll]="true"  [virtualScrollItemSize]="50" 
-  (onScroll)="onScroll($event)" (onNodeExpand)="nodeSelect($event)">
-</p-tree> -->
-<p-tree [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" (onNodeExpand)="nodeSelect($event)" [virtualScrollItemSize]="50"
- >
-</p-tree>
+  <!-- <p-tree  [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" (onNodeExpand)="nodeSelect($event)" [virtualScrollItemSize]="50">
+  </p-tree> -->
+    <p-tree   pDraggable="pnl"
+    [value]="sensesFromLexo" 
+    [scrollHeight]= "scrollHeight" 
+    (onNodeExpand)="nodeSelect($event)"
+    draggableNodes="true" droppableNodes="true"
+     draggableScope="visible" droppableScope="visible"
+    (onDragStart)="onDragStart($event)"
+    (onDragEnd)="onDragEnd($event)">
+      <ng-template let-node pTemplate="parentLevel" > 
+        <i class="pi pi-circle-fill" style="font-size:small;"></i> {{node.label}} - <small><i>{{node.pos}}</i></small>
+      </ng-template>
+      <ng-template let-node pTemplate="childF2L"> 
+        <i class="pi pi-circle" style="color:red;font-size:small;"></i> {{node.label}}
+      </ng-template>
+      <ng-template let-node pTemplate="childS2L"> 
+        <i class="pi pi-circle" style="color:green;font-size:small;"></i> {{node.label}}
+      </ng-template>
+
+    </p-tree>
 </form>

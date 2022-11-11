@@ -6,16 +6,19 @@ import { debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { NodeService } from '../shared/servizi/node.service';
+import {TreeDragDropService} from 'primeng/api';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
+  providers: [TreeDragDropService],
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit, OnDestroy {
 
   sensesFromLexo: TreeNodeCustom[] = [];
   formsFetched: any = [];
+  visible=[];
   /**
    * subscription
    */
@@ -36,7 +39,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   lang: string = "";
   status: string = "";
   offset: number = 0;
-  limit: number = 500;
+  limit: number = 200;
   totalCount: number;
 
   /**
@@ -49,7 +52,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
   showF: boolean = false;
 
   scrollHeight: string;
-
 
   entries = [
     { name: 'entry' },
@@ -98,7 +100,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
           }
           this.totalCount = lexicalEntry.totalHits;
           this.limit += 99;
-          this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
+          // this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
           lexicalEntry.list.forEach(entrataL => {
             if (entrataL.label === this.text) {
               this.elFetched = entrataL.lexicalEntryInstanceName;
@@ -135,7 +137,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         }
         this.totalCount = lexicalEntry.totalHits;
         this.limit += 99;
-        this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
+        // this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
       })
   }
 
@@ -148,14 +150,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
     let childrenForm = [];
     this.dataStorageService.fetchForms(idNode).subscribe(el => {
       el.forEach(e => {
-        childrenForm.push(e);
-        return {
-          collapsedIcon: "pi pi-folder-open",
+        let child2L = {
           label: e.label,
           data: e.label,
-          type: e.type,
+          type: 'childF2L',
           leaf: true
         }
+        childrenForm.push(child2L);
       });
     });
     return childrenForm;
@@ -165,13 +166,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
     let childrenSense = [];
     this.dataStorageService.fetchSense(idNode).subscribe(el => {
       el.forEach(e => {
-        childrenSense.push(e);
-        return {
-          collapsedIcon: "pi pi-folder-open",
+        let child2L = {
           label: e.label,
           data: e.label,
+          type: 'childS2L',
           leaf: true
         }
+        childrenSense.push(child2L);
       });
     });
     return childrenSense;
@@ -183,66 +184,70 @@ export class SidebarComponent implements OnInit, OnDestroy {
    */
   nodeSelect(event) {
     let idNode = event.node.data;
-    this.sub2 = this.dataStorageService.fetchElements(idNode).subscribe(el => {
-      el.elements.forEach(elemento => {
-        if (elemento.label === 'form' && elemento.count > 0) {
-          // recupero forme
-          let tempForm = [{
-            collapsedIcon: "pi pi-folder",
-            expandedIcon: "pi pi-folder-open",
-            label: elemento.label + ' (' + elemento.count + ')',
-            leaf: false,
-            children: []
-          }]
-          event.node.children = tempForm;
-          // chiamata metodo privato
-          let childrenForm = this.addFormChildren(idNode);
-          tempForm.forEach(el => {
-            el.children = childrenForm;
-          })
-        }
-        if (elemento.label === 'sense' && elemento.count > 0) {
-          // recupero sensi
-          let tempSense = [{
-            collapsedIcon: "pi pi-folder",
-            expandedIcon: "pi pi-folder-open",
-            label: elemento.label + ' (' + elemento.count + ')',
-            leaf: false,
-            children: []
-          }]
-
-          event.node.children = [...event.node.children, ...tempSense];
-          let childrenSense = this.addSenseChildren(idNode);
-          tempSense.forEach(el => {
-            el.children = childrenSense;
-          })
-        }
-      })
-    });
+    if(event.node.parent === undefined){
+      this.sub2 = this.dataStorageService.fetchElements(idNode).subscribe(el => {
+        let tempForm = [];
+        let tempSense = [];
+        // salvo il parametro leaf in una variabile,
+        // se la forma o il senso non ha figli non viene visualizzata la freccia per espandere nodo, altrimenti si
+        let isLeaf: boolean;
+        el.elements.forEach(elemento => {
+          if (elemento.label === 'form') {
+            if(elemento.count > 0){
+              isLeaf = false;
+            } else {
+              isLeaf = true;
+            }
+            // recupero forme
+           tempForm  = [{
+              label: elemento.label + ' (' + elemento.count + ')',
+              leaf: isLeaf,
+              type: 'child1level',
+              children: []
+            }]
+            
+            // chiamata metodo privato
+            let childrenForm = this.addFormChildren(idNode);
+            tempForm.forEach(el => {
+              el.children = childrenForm;
+            })
+            event.node.children = tempForm;
+          }
+          if (elemento.label === 'sense') {
+            if(elemento.count > 0){
+              isLeaf = false;
+            } else {
+              isLeaf = true;
+            }
+            // let childrenSense = [];
+            // recupero sensi
+            tempSense = [{
+              label: elemento.label + ' (' + elemento.count + ')',
+              leaf: isLeaf,
+              type: 'child1level',
+              children: []
+            }]
+  
+            let childrenSense = this.addSenseChildren(idNode);
+            tempSense.forEach(el => {
+              el.children = childrenSense;
+            })
+            event.node.children = [...event.node.children, ...tempSense];
+            // event.node.children = [...tempForm, ...tempSense];
+          }
+        })
+      });
+    }
   }
 
-  // private expandChildren(element) {
-  //   this.sub2 = this.dataStorageService.fetchElements(element).subscribe(el => {
-  //     el.elements.forEach(elemento => {
-  //       if (elemento.label === 'form') {
-  //         // recupero forme
-  //         let tempForm = [{
-  //           collapsedIcon: "pi pi-folder",
-  //           expandedIcon: "pi pi-folder-open",
-  //           label: elemento.label + ' (' + elemento.count + ')',
-  //           leaf: false,
-  //           children: []
-  //         }]
-  //         element.children = tempForm;
-  //         // chiamata metodo privato
-  //         let childrenForm = this.addFormChildren(element);
-  //         tempForm.forEach(el => {
-  //           el.children = childrenForm;
-  //         })
-  //       }
-  //     })
-  //   })
-  // }
+  onDragStart(event) {
+    // console.log('path is dropped')
+    // console.log(event.path[0].innerText)
+}
+onDragEnd(event) {
+  console.log('dragEnd')
+  console.log(event.path[0].innerText)
+}
 
   fetchPos() {
     this.sub4 = this.dataStorageService.fetchPos().subscribe(el => {
