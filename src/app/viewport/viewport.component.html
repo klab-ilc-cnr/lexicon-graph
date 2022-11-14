@@ -9,7 +9,9 @@
         <div class="card" style="width: 350px; height: 94.7vh;">
             <p-tabView>
                 <p-tabPanel header="Lexicon">
-                    <app-sidebar></app-sidebar>
+                    <app-sidebar
+                    (invioIdNodo)="nodeDraggedReceveid($event)"
+                    ></app-sidebar>
                 </p-tabPanel>
                 <p-tabPanel header="Ontology">
                     to do
@@ -19,7 +21,9 @@
         </div>
     </div>
     <!-- container -->
-    <div>
-        VIEWPORT
+    <div style="height: 94.7vh; background-color: lightyellow;width: 100%;overflow-x: hidden;">
+        <app-cytoscape-graph
+        [visualizedDraggedNode]="nodeDraggedSent"
+        ></app-cytoscape-graph>
     </div>
 </div>

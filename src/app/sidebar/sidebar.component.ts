@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Subscription } from 'rxjs';
@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { NodeService } from '../shared/servizi/node.service';
-import {TreeDragDropService} from 'primeng/api';
+import { TreeDragDropService } from 'primeng/api';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,8 +17,6 @@ import {TreeDragDropService} from 'primeng/api';
 export class SidebarComponent implements OnInit, OnDestroy {
 
   sensesFromLexo: TreeNodeCustom[] = [];
-  formsFetched: any = [];
-  visible=[];
   /**
    * subscription
    */
@@ -62,6 +60,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   elFetched: string;
 
+  // DRAG event variabile per visualizzare nodo
+  visualizedNode: string;
+  draggedEle: TreeNodeCustom;
+  @Output() invioIdNodo = new EventEmitter<any>();
   constructor(
     private dataStorageService: DataStorageService,
     private nodeService: NodeService,
@@ -87,7 +89,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
       debounceTime(500)
       , distinctUntilChanged()
     ).subscribe((text: string) => {
-      // let elFetched: string;
       this.isLoading = true;
       this.dataStorageService.fetchLexicalEntries(text, this.searchMode, this.type, this.pos,
         this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
@@ -102,11 +103,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.limit += 99;
           // this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
           lexicalEntry.list.forEach(entrataL => {
-            if (entrataL.label === this.text) {
-              this.elFetched = entrataL.lexicalEntryInstanceName;
-            }
+            // if (entrataL.label === this.text) {
+            //   this.elFetched = entrataL.lexicalEntryInstanceName;
+            // }
           })
-          return this.elFetched;
+          // return this.elFetched;
         });
     })
   }
@@ -130,8 +131,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   retrieveSenses() {
+    this.isLoading = true;
     this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
       this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
+        if (lexicalEntry) {
+          this.isLoading = false;
+        }
         if (lexicalEntry.list !== undefined) {
           this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
         }
@@ -184,7 +189,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
    */
   nodeSelect(event) {
     let idNode = event.node.data;
-    if(event.node.parent === undefined){
+    if (event.node.parent === undefined) {
       this.sub2 = this.dataStorageService.fetchElements(idNode).subscribe(el => {
         let tempForm = [];
         let tempSense = [];
@@ -193,19 +198,19 @@ export class SidebarComponent implements OnInit, OnDestroy {
         let isLeaf: boolean;
         el.elements.forEach(elemento => {
           if (elemento.label === 'form') {
-            if(elemento.count > 0){
+            if (elemento.count > 0) {
               isLeaf = false;
             } else {
               isLeaf = true;
             }
             // recupero forme
-           tempForm  = [{
+            tempForm = [{
               label: elemento.label + ' (' + elemento.count + ')',
               leaf: isLeaf,
               type: 'child1level',
               children: []
             }]
-            
+
             // chiamata metodo privato
             let childrenForm = this.addFormChildren(idNode);
             tempForm.forEach(el => {
@@ -214,7 +219,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
             event.node.children = tempForm;
           }
           if (elemento.label === 'sense') {
-            if(elemento.count > 0){
+            if (elemento.count > 0) {
               isLeaf = false;
             } else {
               isLeaf = true;
@@ -227,7 +232,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
               type: 'child1level',
               children: []
             }]
-  
+
             let childrenSense = this.addSenseChildren(idNode);
             tempSense.forEach(el => {
               el.children = childrenSense;
@@ -240,14 +245,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDragStart(event) {
-    // console.log('path is dropped')
-    // console.log(event.path[0].innerText)
-}
-onDragEnd(event) {
-  console.log('dragEnd')
-  console.log(event.path[0].innerText)
-}
+  onDragEnd(event) {
+    this.visualizedNode = event.path[0].childNodes[3].innerText;
+    this.invioIdNodo.emit(this.visualizedNode);
+  }
 
   fetchPos() {
     this.sub4 = this.dataStorageService.fetchPos().subscribe(el => {
@@ -282,32 +283,48 @@ onDragEnd(event) {
           })
       }
       if (e.value.name === 'flexed') {
+        this.formType = 'flexed';
         // espando nodi parent
-        this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
-          el.elements.forEach(elemento => {
-            if (elemento.label === 'form' && elemento.count > 0) {
-              // recupero forme
-              let tempForm = [{
-                collapsedIcon: "pi pi-folder",
-                expandedIcon: "pi pi-folder-open",
-                label: elemento.label + ' (' + elemento.count + ')',
-                leaf: false,
-                children: []
-              }]
-              this.sensesFromLexo.forEach(el => {
-                el.children = tempForm
+        this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+          this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+            lexicalEntry.list.forEach(l => {
+              this.elFetched = l.lexicalEntryInstanceName;
+            });
+
+            this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
+              el.elements.forEach(elemento => {
+                if (elemento.label === 'form' && elemento.count > 0) {
+                  // recupero forme
+                  let tempForm = [{
+                    collapsedIcon: "pi pi-folder",
+                    expandedIcon: "pi pi-folder-open",
+                    label: elemento.label + ' (' + elemento.count + ')',
+                    leaf: false,
+                    children: []
+                  }]
+
+                  this.sensesFromLexo.forEach(el => {
+                    el.children = tempForm
+                  })
+                  this.sensesFromLexo.forEach(node => {
+                    this.expandRecursive(node, true);
+                  });
+                  // chiamata metodo privato
+                  let childrenForm = this.addFormChildren(this.elFetched);
+                  // apre parent
+
+                  // apre children
+                  tempForm.forEach(el => {
+                    el.children = childrenForm;
+                  })
+                }
               })
-              this.sensesFromLexo.forEach(node => {
-                this.expandRecursive(node, true);
-              });
-              // chiamata metodo privato
-              let childrenForm = this.addFormChildren(this.elFetched);
-              tempForm.forEach(el => {
-                el.children = childrenForm;
-              })
-            }
-          })
-        });
+            });
+
+
+          });
+
+
       }
     } else {
       // collapse nodi espansi
@@ -317,6 +334,7 @@ onDragEnd(event) {
     }
 
   }
+
 
   private expandRecursive(node: TreeNode, isExpand: boolean) {
     node.expanded = isExpand;
@@ -348,8 +366,12 @@ onDragEnd(event) {
 
   onChange(e) {
     this.searchMode = e.target.value;
+    this.isLoading = true;
     this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
       this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
+        if (lexicalEntry) {
+          this.isLoading = false;
+        }
         if (lexicalEntry.list !== undefined) {
           this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
         }

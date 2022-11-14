@@ -44,3 +44,37 @@ button#btnIcon{
 ::ng-deep.p-treenode-content{
     padding: 0!important; 
 }
+
+
+::ng-deep.p-progress-spinner{
+    position: absolute!important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.overlay500px {
+    top: 26%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: 2;
+    backdrop-filter: blur(1px);
+    height: 70vh
+    // background-color: #fff;
+    // opacity: 0.2;
+}
+
+.overlay200px {
+    top: 43%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: 2;
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    height: 54vh;
+}

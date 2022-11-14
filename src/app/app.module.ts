@@ -20,10 +20,12 @@ import {ScrollerModule} from 'primeng/scroller'
 import {TooltipModule} from 'primeng/tooltip';
 import {ScrollPanelModule} from 'primeng/scrollpanel';
 import {DragDropModule} from 'primeng/dragdrop';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 
 import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CytoscapeGraphComponent } from './cytoscape-graph/cytoscape-graph.component';
 
 
 @NgModule({
@@ -31,7 +33,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     AppComponent,
     HeaderComponent,
     ViewportComponent,
-    SidebarComponent
+    SidebarComponent,
+    CytoscapeGraphComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +55,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     FontAwesomeModule,
     TooltipModule,
     ScrollPanelModule,
-    DragDropModule
+    DragDropModule,
+    ProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

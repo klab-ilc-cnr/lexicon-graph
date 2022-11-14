@@ -4,7 +4,7 @@
       <div class="col-12">
         <div class="p-inputgroup"> 
           <span class="p-input-icon-right">
-            <i class="pi pi-spin pi-spinner" *ngIf="isLoading"></i>
+            <!-- <i class="pi pi-spin pi-spinner" *ngIf="isLoading"></i> -->
             <input type="text" pInputText formControlName="entrataLessicale">
           </span> 
           <button pTooltip="show/hide filter" tooltipPosition="bottom" type="button" pButton pRipple icon="pi pi-filter-fill" (click)="showFilter()"></button>
@@ -23,7 +23,7 @@
           </div>
           <div class="col-6">
             <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="startsWith" formControlName="selectedFilter"></p-radioButton>
-            <label for="enterFilter">Stars</label>
+            <label for="enterFilter">Starts</label>
           </div>
         </div>
         <div class="row bottom">
@@ -68,15 +68,23 @@
   <p-divider></p-divider>
   <!-- <p-tree  [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" (onNodeExpand)="nodeSelect($event)" [virtualScrollItemSize]="50">
   </p-tree> -->
-    <p-tree   pDraggable="pnl"
+
+  <ng-container *ngIf="isLoading">
+    <div 
+    [ngClass]="{'overlay500px': scrollHeight=== '500px',
+                'overlay200px': scrollHeight === '370px'}"
+    class="overlay" ></div>
+    <p-progressSpinner></p-progressSpinner>
+  </ng-container>
+
+    <p-tree   
+    pDraggable="node" 
     [value]="sensesFromLexo" 
     [scrollHeight]= "scrollHeight" 
     (onNodeExpand)="nodeSelect($event)"
-    draggableNodes="true" droppableNodes="true"
-     draggableScope="visible" droppableScope="visible"
-    (onDragStart)="onDragStart($event)"
-    (onDragEnd)="onDragEnd($event)">
-      <ng-template let-node pTemplate="parentLevel" > 
+    draggableNodes="true"
+    (onDragStart)="onDragEnd($event)">
+      <ng-template let-node pTemplate="parentLevel"> 
         <i class="pi pi-circle-fill" style="font-size:small;"></i> {{node.label}} - <small><i>{{node.pos}}</i></small>
       </ng-template>
       <ng-template let-node pTemplate="childF2L"> 
@@ -85,6 +93,5 @@
       <ng-template let-node pTemplate="childS2L"> 
         <i class="pi pi-circle" style="color:green;font-size:small;"></i> {{node.label}}
       </ng-template>
-
-    </p-tree>
+    </p-tree>  
 </form>
