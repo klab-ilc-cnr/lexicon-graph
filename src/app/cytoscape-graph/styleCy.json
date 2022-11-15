@@ -1,0 +1,43 @@
+[ 
+  {
+    "selector": "node",
+    "style": {
+      "width": "50",
+      "height": "50",
+      "label": "data(id)"
+    }
+  },
+  {
+    "selector": "node.border",
+    "style": {
+      "background-color": "white",
+      "border-style": "solid",
+      "border-width": 2    
+    }
+  },
+  {
+    "selector": "node.sense",
+    "style": {
+     "border-color" : "#48a3e5"
+    }
+  },
+  {
+    "selector": "node.form",
+    "style": {
+     "border-color" : "#ff0000"
+    }
+  },
+  {
+    "selector": "node.lexicalEntry",
+    "style": {
+     "border-color" : "#000000"
+    }
+  },
+  {
+    "selector": "edge",
+    "style":{
+      "target-arrow-shape": "triangle",
+      "curve-style": "straight"
+    }
+  }
+]

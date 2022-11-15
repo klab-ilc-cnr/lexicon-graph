@@ -60,6 +60,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   elFetched: string;
 
+  sensiDroppati = [];
+  formsDroppati = [];
+
   // DRAG event variabile per visualizzare nodo
   visualizedNode: string;
   draggedEle: TreeNodeCustom;
@@ -101,13 +104,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
           }
           this.totalCount = lexicalEntry.totalHits;
           this.limit += 99;
-          // this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
-          lexicalEntry.list.forEach(entrataL => {
-            // if (entrataL.label === this.text) {
-            //   this.elFetched = entrataL.lexicalEntryInstanceName;
-            // }
-          })
-          // return this.elFetched;
         });
     })
   }
@@ -155,6 +151,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     let childrenForm = [];
     this.dataStorageService.fetchForms(idNode).subscribe(el => {
       el.forEach(e => {
+        this.formsDroppati.push(e);
         let child2L = {
           label: e.label,
           data: e.label,
@@ -171,6 +168,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     let childrenSense = [];
     this.dataStorageService.fetchSense(idNode).subscribe(el => {
       el.forEach(e => {
+        this.sensiDroppati.push(e);
         let child2L = {
           label: e.label,
           data: e.label,
@@ -187,7 +185,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
    * 
    * @param event espansione nodo per aprire children alberatura
    */
-  nodeSelect(event) {
+  nodeExpand(event) {
     let idNode = event.node.data;
     if (event.node.parent === undefined) {
       this.sub2 = this.dataStorageService.fetchElements(idNode).subscribe(el => {
@@ -234,6 +232,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
             }]
 
             let childrenSense = this.addSenseChildren(idNode);
+
             tempSense.forEach(el => {
               el.children = childrenSense;
             })
@@ -245,9 +244,32 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDragEnd(event) {
+  onDragStart(event) {
     this.visualizedNode = event.path[0].childNodes[3].innerText;
+    // senso
+    this.sensiDroppati.forEach(el=>{
+      if(el.definition.includes(this.visualizedNode.trim())){
+        localStorage.setItem('sensoChild',JSON.stringify(el))
+      }
+    })
+    // forma
+    this.formsDroppati.forEach(el=>{
+      if(el.label.includes(this.visualizedNode.trim())){  
+        localStorage.setItem('formChild',JSON.stringify(el))
+      }
+    })
     this.invioIdNodo.emit(this.visualizedNode);
+    let result = this.visualizedNode.trim();
+    let sensoDropped = JSON.parse(localStorage.getItem('sensoChild'))
+    let formDropped = JSON.parse(localStorage.getItem('formChild'));
+  //   if(sensoDropped !== null && result === sensoDropped.label){
+  //     localStorage.setItem('isAsense','true');
+  //     localStorage.setItem('isAform','false');
+  //   }
+  //  if(formDropped !== null && result === formDropped.label){
+  //     localStorage.setItem('isAform','true');
+  //     localStorage.setItem('isAsense','false');
+  //   }
   }
 
   fetchPos() {
@@ -283,14 +305,23 @@ export class SidebarComponent implements OnInit, OnDestroy {
           })
       }
       if (e.value.name === 'flexed') {
-        this.formType = 'flexed';
         // espando nodi parent
         this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-          this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+          'flexed', this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+            this.totalCount = lexicalEntry.totalHits;
             lexicalEntry.list.forEach(l => {
+              let flexedParent;
+              flexedParent = [{
+                collapsedIcon: "pi pi-folder",
+                expandedIcon: "pi pi-folder-open",
+                label: l.label,
+                leaf: false,
+                type: "parentLevel",
+                children: []
+              }]; 
+              this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
               this.elFetched = l.lexicalEntryInstanceName;
             });
-
             this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
               el.elements.forEach(elemento => {
                 if (elemento.label === 'form' && elemento.count > 0) {
@@ -301,7 +332,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
                     label: elemento.label + ' (' + elemento.count + ')',
                     leaf: false,
                     children: []
-                  }]
+                  }];
 
                   this.sensesFromLexo.forEach(el => {
                     el.children = tempForm

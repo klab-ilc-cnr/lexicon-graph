@@ -81,17 +81,17 @@
     pDraggable="node" 
     [value]="sensesFromLexo" 
     [scrollHeight]= "scrollHeight" 
-    (onNodeExpand)="nodeSelect($event)"
+    (onNodeExpand)="nodeExpand($event)"
     draggableNodes="true"
-    (onDragStart)="onDragEnd($event)">
+    (onDragStart)="onDragStart($event)">
       <ng-template let-node pTemplate="parentLevel"> 
         <i class="pi pi-circle-fill" style="font-size:small;"></i> {{node.label}} - <small><i>{{node.pos}}</i></small>
       </ng-template>
       <ng-template let-node pTemplate="childF2L"> 
-        <i class="pi pi-circle" style="color:red;font-size:small;"></i> {{node.label}}
+        <i class="pi pi-circle" style="color:#ff0000;font-size:small;"></i> {{node.label}}
       </ng-template>
       <ng-template let-node pTemplate="childS2L"> 
-        <i class="pi pi-circle" style="color:green;font-size:small;"></i> {{node.label}}
+        <i class="pi pi-circle" style="color:#48a3e5;font-size:small;"></i> {{node.label}}
       </ng-template>
     </p-tree>  
 </form>
