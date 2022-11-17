@@ -1,7 +1,5 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import cytoscape from 'cytoscape';
-import { Forms } from '../shared/models/forms.model';
-import { Sense } from '../shared/models/sense.model';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { AddNodoService } from './servizi/add-nodo.service';
 import styleCy from './styleCy.json'
@@ -14,11 +12,7 @@ export class CytoscapeGraphComponent implements OnInit {
   constructor(
     private addElement:AddNodoService) { }
   cy: any;
-  // sensoDroppato;
-  // formDroppato;
-  // parentDroppato;
 
-  // @Input() visualizedDraggedNode: string;
   @Input() parentNode: TreeNodeCustom;
   @Input() senseNode: TreeNodeCustom;
   @Input() formNode: TreeNodeCustom;
@@ -43,19 +37,19 @@ export class CytoscapeGraphComponent implements OnInit {
       x: evt.x, y: evt.y
     };
     if(this.parentNode){
-      this.addElement.addNodo(this.cy, this.parentNode.label, this.parentNode.label,pos);
-      this.cy.getElementById(this.parentNode.label).addClass('border')
-      this.cy.getElementById(this.parentNode.label).addClass('lexicalEntry');
+      this.addElement.addNodo(this.cy, this.parentNode.data, this.parentNode.data,pos);
+      this.cy.getElementById(this.parentNode.data).addClass('border')
+      this.cy.getElementById(this.parentNode.data).addClass('lexicalEntry');
     }
-    if(this.senseNode){
-      this.addElement.addNodo(this.cy, this.senseNode.label, this.senseNode.label, pos);
-      this.cy.getElementById(this.senseNode.label).addClass('border')
-      this.cy.getElementById(this.senseNode.label).addClass('sense');
+     if(this.senseNode){
+      this.addElement.addNodo(this.cy, this.senseNode.senseInstanceName, this.senseNode.senseInstanceName, pos);
+      this.cy.getElementById(this.senseNode.senseInstanceName).addClass('border')
+      this.cy.getElementById(this.senseNode.senseInstanceName).addClass('sense');
     }
     if(this.formNode){
-      this.addElement.addNodo(this.cy, this.formNode.label, this.formNode.label, pos);
-      this.cy.getElementById(this.formNode.label).addClass('border')
-      this.cy.getElementById(this.formNode.label).addClass('form');
+      this.addElement.addNodo(this.cy, this.formNode.formInstanceName, this.formNode.formInstanceName, pos);
+      this.cy.getElementById(this.formNode.formInstanceName).addClass('border')
+      this.cy.getElementById(this.formNode.formInstanceName).addClass('form');
     }
   }
 

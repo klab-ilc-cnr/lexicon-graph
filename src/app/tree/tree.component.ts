@@ -4,7 +4,6 @@ import { take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { NodeService } from '../shared/servizi/node.service';
-
 @Component({
   selector: 'app-tree',
   templateUrl: './tree.component.html',
@@ -99,6 +98,7 @@ export class TreeComponent implements OnInit, OnDestroy {
           label: e.label,
           data: e.label,
           type: 'childF2L',
+          formInstanceName: e.formInstanceName,
           morphology: morphology,
           leaf: true
         }
@@ -117,6 +117,7 @@ export class TreeComponent implements OnInit, OnDestroy {
           label: e.label,
           data: e.label,
           type: 'childS2L',
+          senseInstanceName: e.senseInstanceName,
           leaf: true
         }
         childrenSense.push(child2L);
@@ -202,7 +203,7 @@ export class TreeComponent implements OnInit, OnDestroy {
   onDragStart(event) {
     let parentNode;
     let formChid;
-    let senseChild;
+    let senseChild;    
     if (this.visualizedNode.type === 'parentLevel') {
       parentNode = this.visualizedNode;
       this.invioNodoParent.emit(parentNode);

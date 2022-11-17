@@ -5,6 +5,7 @@ export interface TreeNodeCustom extends TreeNode {
   lexicalEntryInstanceName: string | undefined;
   count?:number,
   senseInstanceName?: string;
+  formInstanceName?:string;
   pos: string;
   type:string;
 }
