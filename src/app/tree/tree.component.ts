@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
@@ -43,6 +43,10 @@ export class TreeComponent implements OnInit, OnDestroy {
   limit: number = 200;
   totalCount: number;
 
+  /**
+   * event emitter per inviare total count lexical entry da visualizzare all'apertura dell'app nella sidebar
+   */
+  @Output() invioTotalCount = new EventEmitter<number>();
   /** 
    * filtri ricerca 
   */
@@ -63,7 +67,9 @@ export class TreeComponent implements OnInit, OnDestroy {
   @Output() invioNodoParent = new EventEmitter<any>();
   @Output() invioNodoForm = new EventEmitter<any>();
   @Output() invioNodoSense = new EventEmitter<any>();
-  // @Output() invioIdNodo = new EventEmitter<any>();
+
+  showHideMorphTraits: boolean;
+  
   constructor(
     private dataStorageService: DataStorageService,
     private nodeService: NodeService) { }
@@ -190,8 +196,6 @@ export class TreeComponent implements OnInit, OnDestroy {
    */
   mouseDown(target) {
     this.visualizedNode = target;
-    console.log('nodo dragged')
-    console.log(target)
     return this.visualizedNode;
   }
 
@@ -230,6 +234,7 @@ export class TreeComponent implements OnInit, OnDestroy {
           this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
         }
         this.totalCount = lexicalEntry.totalHits;
+        this.invioTotalCount.emit(this.totalCount)
         this.limit += 99;
       })
   }

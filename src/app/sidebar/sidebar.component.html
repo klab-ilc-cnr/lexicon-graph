@@ -12,7 +12,13 @@
           <button pTooltip="refresh form" tooltipPosition="bottom" id="btnIcon" type="button" pButton pRipple
             icon="pi pi-refresh" (click)="resetFilter()"></button>
         </div>
-        <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}}
+        <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}} <br>
+        <p-inputSwitch
+        formControlName="morphologicalTraits"
+        (onChange)="showHideMorphTraits($event)"
+        pTooltip="show/hide morphogical traits"
+        tooltipPosition="bottom"></p-inputSwitch>
+        <small style="font-size: smaller;"> MORPHOLOGICAL TRAITS</small>
       </div>
     </div>
 
@@ -81,11 +87,12 @@
     </div>
   </div>
   <p-divider></p-divider>
+  <!-- spinner -->
   <ng-container *ngIf="isLoading">
     <div 
-    [ngClass]="{'overlay500px': scrollHeight=== '500px',
-                'overlay200px': scrollHeight === '370px'}" 
-                class="overlay"></div>
+    [ngClass]="{'overlay500px': showF===false,
+                'overlay200px':showF===true}"
+    class="overlay"></div>
     <p-progressSpinner></p-progressSpinner>
   </ng-container>
 
@@ -96,8 +103,10 @@
     (invioNodoParent)="nodoParentReceived($event)"
     (invioNodoSense)="nodoSenseReceived($event)"
     (invioNodoForm)="nodoFormReceived($event)"
+    (invioTotalCount)="totalCountReceived($event)"
     [showF]="showF"
     [ngClass]="{'heightExtend': showF===false,
-                'heightMinimize':showF===true}"></app-tree>
+                'heightMinimize':showF===true}"
+                ></app-tree>
   </div>
 </form>

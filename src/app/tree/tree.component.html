@@ -11,7 +11,7 @@
           <span (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 
         </ng-template>
         <ng-template let-node pTemplate="childF2L" > 
-          <i class="pi pi-circle" style="color:#ff0000;font-size:small;"></i><span (mouseover)="mouseDown(node)"> {{node.label}} </span>- <br> <small><em>{{node.morphology}}</em></small><br>
+          <i class="pi pi-circle" style="color:#ff0000;font-size:small;"></i><span (mouseover)="mouseDown(node)"> {{node.label}} </span><br> <small *ngIf="showHideMorphTraits"><em>{{node.morphology}}</em></small><br>
         </ng-template>
         <ng-template let-node pTemplate="childS1L"> 
           <span (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 

@@ -54,27 +54,25 @@ button#btnIcon{
     z-index: 3;
 }
 
-.overlay500px {
-    top: 26%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    position: absolute;
-    z-index: 2;
-    backdrop-filter: blur(1px);
-    height: 70vh
-    // background-color: #fff;
-    // opacity: 0.2;
+::ng-deep.p-inputswitch-slider{
+    height:1em;
+    width:2em;
 }
 
-.overlay200px {
-    top: 43%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    position: absolute;
-    z-index: 2;
-    -webkit-backdrop-filter: blur(1px);
-    backdrop-filter: blur(1px);
-    height: 54vh;
+::ng-deep .p-inputswitch .p-inputswitch-slider:before {
+    background: #ffffff;
+    width: 0.8em;
+    height: 0.8rem;
+    left: 0.25rem;
+    margin-top: -0.4rem;
+    border-radius: 50%;
+    transition-duration: 0.2s;
+}
+
+::ng-deep.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
+    transform: translateX(0.9rem);
+}
+
+::ng-deep .p-inputswitch.p-component{
+    top: 15%;
 }

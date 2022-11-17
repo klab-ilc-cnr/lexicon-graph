@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 import { Subscription } from 'rxjs';
@@ -7,6 +7,7 @@ import { DataStorageService } from '../shared/data-storage/data-storage.service'
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { NodeService } from '../shared/servizi/node.service';
 import { TreeDragDropService } from 'primeng/api';
+import { TreeComponent } from '../tree/tree.component';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,7 +16,7 @@ import { TreeDragDropService } from 'primeng/api';
   styleUrls: ['./sidebar.component.scss','../mediaqueries/mediaquery.scss']
 })
 export class SidebarComponent implements OnInit, OnDestroy {
-
+  @ViewChild(TreeComponent, { static: true }) istanzaTreeComponent: TreeComponent;
   sensesFromLexo: TreeNodeCustom[] = [];
   /**
    * subscription
@@ -57,11 +58,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   posFetched = [];
 
   elFetched: string;
-
-  sensiDroppati = [];
-  formsDroppati = [];
-
+  
   listener;
+
+  showMorphTraits:boolean = false;
   // DRAG event variabile per visualizzare nodo
   draggedEle: TreeNodeCustom;
 
@@ -98,12 +98,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       entrataLessicale: new FormControl(),
       selectedFilter: ['startsWith', []],
       posSelected: new FormControl(),
-      entrySelected: new FormControl()
+      entrySelected: new FormControl(),
+      morphologicalTraits: new FormControl(false)
     })
   }
 
 
   ngOnInit(): void {
+    // this.retrieveSenses();
     this.cercaEntrataLessicale.get('entrataLessicale').valueChanges.pipe(
       debounceTime(500)
       , distinctUntilChanged()
@@ -153,7 +155,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
           return `[ ` + e.trait + `-` + e.value + ` ] `
         });
         morphology.join('\n')
-        this.formsDroppati.push(e);
         let child2L = {
           label: e.label,
           data: e.label,
@@ -255,7 +256,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   }
 
-
   private expandRecursive(node: TreeNode, isExpand: boolean) {
     node.expanded = isExpand;
     if (node.children) {
@@ -269,11 +269,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.showF = !this.showF;
   }
 
+  showHideMorphTraits($event){
+    if($event.checked === true){
+      this.istanzaTreeComponent.showHideMorphTraits = true;
+    } else {
+      this.istanzaTreeComponent.showHideMorphTraits = false;
+    }
+  }
+
   resetFilter() {
     this.cercaEntrataLessicale.get('entrataLessicale').setValue('');
     this.cercaEntrataLessicale.get('selectedFilter').setValue('startsWith');
     this.cercaEntrataLessicale.get('posSelected').setValue('');
     this.cercaEntrataLessicale.get('entrySelected').setValue('');
+    this.cercaEntrataLessicale.get('morphologicalTraits').setValue(false);
+    this.istanzaTreeComponent.showHideMorphTraits = false;
     this.searchMode = "startsWith";
     this.text = "*";
     this.pos = "";
@@ -315,6 +325,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.formSent = $event;
     this.invioNodoFormFromTree.emit(this.formSent)
   }
+
+  totalCountReceived($event){
+    this.totalCount = $event;
+  }
   /**
    * unsubscribe subscriptions
    */
@@ -324,5 +338,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.sub3.unsubscribe();
     this.sub4.unsubscribe();
   }
+
 
 }

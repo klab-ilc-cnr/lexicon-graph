@@ -6,15 +6,39 @@
     }
 
     .heightExtend {
-        height: 67vh;
+        height: 63vh;
     }
 
     .heightMinimize {
-        height: 50vh;
+        height: 47vh;
     }
     
     #lateralColumn{
         width: 3%;
+    }
+    
+    .overlay500px {
+        top: 26%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        backdrop-filter: blur(1px);
+        height: 67vh;
+    }
+    
+    .overlay200px {
+        top: 47%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        height: 50vh;
+        
     }
 
 }
@@ -27,15 +51,39 @@
     }
 
     .heightExtend {
-        height: 74vh;
+        height: 72vh;
     }
 
     .heightMinimize {
-        height: 62vh;
+        height: 60vh;
     }
 
     #lateralColumn{
         width: 3%;
+    }
+
+    .overlay500px {
+        top: 19%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        height: 74vh;
+    }
+    
+    .overlay200px {
+        top: 31%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        height: 62vh;
     }
 
 }
@@ -53,6 +101,30 @@
 
     #lateralColumn{
         width: 1%;
+    }
+
+    .overlay500px {
+        top: 9%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(1px);
+        backdrop-filter: blur(1px);
+        height: 85vh;
+    }
+    
+    .overlay200px {
+        top: 16%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(1px);
+        backdrop-filter: blur(1px);
+        height: 77.5vh;
     }
 
 }
