@@ -26,6 +26,7 @@ import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CytoscapeGraphComponent } from './cytoscape-graph/cytoscape-graph.component';
+import { TreeComponent } from './tree/tree.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { CytoscapeGraphComponent } from './cytoscape-graph/cytoscape-graph.compo
     HeaderComponent,
     ViewportComponent,
     SidebarComponent,
-    CytoscapeGraphComponent
+    CytoscapeGraphComponent,
+    TreeComponent
   ],
   imports: [
     BrowserModule,

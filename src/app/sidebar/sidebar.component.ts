@@ -1,6 +1,6 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { LazyLoadEvent, TreeNode } from 'primeng/api';
+import { TreeNode } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
@@ -12,7 +12,7 @@ import { TreeDragDropService } from 'primeng/api';
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   providers: [TreeDragDropService],
-  styleUrls: ['./sidebar.component.scss']
+  styleUrls: ['./sidebar.component.scss','../mediaqueries/mediaquery.scss']
 })
 export class SidebarComponent implements OnInit, OnDestroy {
 
@@ -49,8 +49,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   showF: boolean = false;
 
-  scrollHeight: string;
-
   entries = [
     { name: 'entry' },
     { name: 'flexed' }
@@ -63,15 +61,36 @@ export class SidebarComponent implements OnInit, OnDestroy {
   sensiDroppati = [];
   formsDroppati = [];
 
+  listener;
   // DRAG event variabile per visualizzare nodo
-  visualizedNode: string;
   draggedEle: TreeNodeCustom;
-  @Output() invioIdNodo = new EventEmitter<any>();
+
+  /**
+   * output event per inviare nodi di tipo parent, sense o form
+   */
+  @Output() invioNodoParentFromTree = new EventEmitter<any>();
+  @Output() invioNodoSenseFromTree = new EventEmitter<any>();
+  @Output() invioNodoFormFromTree = new EventEmitter<any>();
+
+  parentSent: TreeNodeCustom;
+  senseSent: TreeNodeCustom;
+  formSent: TreeNodeCustom;
+/** 
+ * event emitter per resettare grafo se viene resettato form
+ */
+  @Output() resetGraph = new EventEmitter<boolean>();
+
+  /**
+   * 
+   * @param dataStorageService servizio chiamate http
+   * @param nodeService servizio trasformazione array senselexo in nodi di tipo treecustom da visualizzare nell'alberatura
+   * @param fb formbuilder per il form di ricerca
+   */
+
   constructor(
     private dataStorageService: DataStorageService,
     private nodeService: NodeService,
     private fb: FormBuilder) {
-
     /**
      * form filtro di ricerca 
      */
@@ -85,9 +104,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.scrollHeight = '500px';
-    // recupero lista entrate lessicali da visualizzare nell'alberatura TO DO VIRTUAL SCROLL
-    this.retrieveSenses();
     this.cercaEntrataLessicale.get('entrataLessicale').valueChanges.pipe(
       debounceTime(500)
       , distinctUntilChanged()
@@ -108,24 +124,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     })
   }
 
-  onScroll(event: any) {
-    if (event.originalEvent.target.offsetHeight + event.originalEvent.target.scrollTop >= event.originalEvent.target.scrollHeight) {
-      this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-        this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
-          this.isLoading = true;
-          if (this.cercaEntrataLessicale.get('entrataLessicale').value === '') {
-            this.isLoading = false;
-          }
-          if (lexicalEntry.list !== undefined) {
-            this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
-          }
-          this.totalCount = lexicalEntry.totalHits;
-          this.limit += 99;
-          this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
-        });
-    }
-  }
-
   retrieveSenses() {
     this.isLoading = true;
     this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
@@ -138,138 +136,35 @@ export class SidebarComponent implements OnInit, OnDestroy {
         }
         this.totalCount = lexicalEntry.totalHits;
         this.limit += 99;
-        // this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
       })
   }
 
   /**
-   * metodo che restituisce children form 
-   * @param idNode nodo parent
-   * @returns array di figli di tipo form
-   */
+    * metodo che restituisce children form 
+    * @param idNode nodo parent
+    * @returns array di figli di tipo form
+    */
   private addFormChildren(idNode) {
     let childrenForm = [];
     this.dataStorageService.fetchForms(idNode).subscribe(el => {
       el.forEach(e => {
+        let morphology = [];
+        morphology = e.morphology.map(e => {
+          return `[ ` + e.trait + `-` + e.value + ` ] `
+        });
+        morphology.join('\n')
         this.formsDroppati.push(e);
         let child2L = {
           label: e.label,
           data: e.label,
           type: 'childF2L',
+          morphology: morphology,
           leaf: true
         }
         childrenForm.push(child2L);
       });
     });
     return childrenForm;
-  }
-
-  private addSenseChildren(idNode) {
-    let childrenSense = [];
-    this.dataStorageService.fetchSense(idNode).subscribe(el => {
-      el.forEach(e => {
-        this.sensiDroppati.push(e);
-        let child2L = {
-          label: e.label,
-          data: e.label,
-          type: 'childS2L',
-          leaf: true
-        }
-        childrenSense.push(child2L);
-      });
-    });
-    return childrenSense;
-  }
-
-  /**
-   * 
-   * @param event espansione nodo per aprire children alberatura
-   */
-  nodeExpand(event) {
-    let idNode = event.node.data;
-    if (event.node.parent === undefined) {
-      this.sub2 = this.dataStorageService.fetchElements(idNode).subscribe(el => {
-        let tempForm = [];
-        let tempSense = [];
-        // salvo il parametro leaf in una variabile,
-        // se la forma o il senso non ha figli non viene visualizzata la freccia per espandere nodo, altrimenti si
-        let isLeaf: boolean;
-        el.elements.forEach(elemento => {
-          if (elemento.label === 'form') {
-            if (elemento.count > 0) {
-              isLeaf = false;
-            } else {
-              isLeaf = true;
-            }
-            // recupero forme
-            tempForm = [{
-              label: elemento.label + ' (' + elemento.count + ')',
-              leaf: isLeaf,
-              type: 'child1level',
-              children: []
-            }]
-
-            // chiamata metodo privato
-            let childrenForm = this.addFormChildren(idNode);
-            tempForm.forEach(el => {
-              el.children = childrenForm;
-            })
-            event.node.children = tempForm;
-          }
-          if (elemento.label === 'sense') {
-            if (elemento.count > 0) {
-              isLeaf = false;
-            } else {
-              isLeaf = true;
-            }
-            // let childrenSense = [];
-            // recupero sensi
-            tempSense = [{
-              label: elemento.label + ' (' + elemento.count + ')',
-              leaf: isLeaf,
-              type: 'child1level',
-              children: []
-            }]
-
-            let childrenSense = this.addSenseChildren(idNode);
-
-            tempSense.forEach(el => {
-              el.children = childrenSense;
-            })
-            event.node.children = [...event.node.children, ...tempSense];
-            // event.node.children = [...tempForm, ...tempSense];
-          }
-        })
-      });
-    }
-  }
-
-  onDragStart(event) {
-    this.visualizedNode = event.path[0].childNodes[3].innerText;
-    // senso
-    this.sensiDroppati.forEach(el=>{
-      if(el.definition.includes(this.visualizedNode.trim())){
-        localStorage.setItem('sensoChild',JSON.stringify(el))
-      }
-    })
-    // forma
-    this.formsDroppati.forEach(el=>{
-      if(el.label.includes(this.visualizedNode.trim())){  
-        localStorage.setItem('formChild',JSON.stringify(el))
-      }
-    })
-    this.invioIdNodo.emit(this.visualizedNode);
-    let result = this.visualizedNode.trim();
-    let sensoDropped = JSON.parse(localStorage.getItem('sensoChild'))
-    let formDropped = JSON.parse(localStorage.getItem('formChild'));
-  //   if(sensoDropped !== null && result === sensoDropped.label){
-  //     localStorage.setItem('isAsense','true');
-  //     localStorage.setItem('isAform','false');
-  //   }
-  //  if(formDropped !== null && result === formDropped.label){
-  //     localStorage.setItem('isAform','true');
-  //     localStorage.setItem('isAsense','false');
-  //   }
   }
 
   fetchPos() {
@@ -318,7 +213,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
                 leaf: false,
                 type: "parentLevel",
                 children: []
-              }]; 
+              }];
               this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
               this.elFetched = l.lexicalEntryInstanceName;
             });
@@ -342,8 +237,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
                   });
                   // chiamata metodo privato
                   let childrenForm = this.addFormChildren(this.elFetched);
-                  // apre parent
-
                   // apre children
                   tempForm.forEach(el => {
                     el.children = childrenForm;
@@ -351,11 +244,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
                 }
               })
             });
-
-
           });
-
-
       }
     } else {
       // collapse nodi espansi
@@ -378,11 +267,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   showFilter() {
     this.showF = !this.showF;
-    if (this.showF === true) {
-      this.scrollHeight = '370px';
-    } else {
-      this.scrollHeight = '500px';
-    }
   }
 
   resetFilter() {
@@ -393,6 +277,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.searchMode = "startsWith";
     this.text = "*";
     this.pos = "";
+    this.resetGraph.emit(true);
+
   }
 
   onChange(e) {
@@ -408,8 +294,26 @@ export class SidebarComponent implements OnInit, OnDestroy {
         }
         this.totalCount = lexicalEntry.totalHits;
         this.limit += 99;
-        this.sensesFromLexo = this.sensesFromLexo.concat(this.sensesFromLexo);
       })
+  }
+
+  /**
+   * 
+   * @param $event nodo parent, sense e form ricevuto da tree component, da inviare a viewport component
+   */
+  nodoParentReceived($event) {
+    this.parentSent = $event;
+    this.invioNodoParentFromTree.emit(this.parentSent);
+  }
+
+  nodoSenseReceived($event) {
+    this.senseSent = $event;
+    this.invioNodoSenseFromTree.emit(this.senseSent);
+  }
+
+  nodoFormReceived($event) {
+    this.formSent = $event;
+    this.invioNodoFormFromTree.emit(this.formSent)
   }
   /**
    * unsubscribe subscriptions

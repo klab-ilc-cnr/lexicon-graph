@@ -1,0 +1,58 @@
+/* BREAKPOINT schermo < 1920px */
+
+@media screen and (min-width: 1025px) {
+    .col {
+        padding-left: 0;
+    }
+
+    .heightExtend {
+        height: 67vh;
+    }
+
+    .heightMinimize {
+        height: 50vh;
+    }
+    
+    #lateralColumn{
+        width: 3%;
+    }
+
+}
+
+/* BREAKPOINT schermo 1920 x 1080px */
+
+@media screen and (min-width: 1919px) {
+    .col {
+        padding-left: 0;
+    }
+
+    .heightExtend {
+        height: 74vh;
+    }
+
+    .heightMinimize {
+        height: 62vh;
+    }
+
+    #lateralColumn{
+        width: 3%;
+    }
+
+}
+
+/* BREAKPOINT schermo 3840 x 2160 px */
+
+@media screen and (min-width: 3839px) {
+    .heightExtend {
+        height: 83vh;
+    }
+
+    .heightMinimize {
+        height: 77.5vh;
+    }
+
+    #lateralColumn{
+        width: 1%;
+    }
+
+}

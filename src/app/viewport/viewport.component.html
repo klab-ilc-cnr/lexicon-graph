@@ -10,7 +10,10 @@
             <p-tabView>
                 <p-tabPanel header="Lexicon">
                     <app-sidebar
-                    (invioIdNodo)="nodeDraggedReceveid($event)"
+                    (invioNodoParentFromTree)="nodoParentFromSidebar($event)"
+                    (invioNodoSenseFromTree)="nodoSenseFromSidebar($event)"
+                    (invioNodoFormFromTree)="nodoFormFromSidebar($event)"
+                    (resetGraph)="resetGraph($event)"
                     ></app-sidebar>
                 </p-tabPanel>
                 <p-tabPanel header="Ontology">
@@ -23,7 +26,9 @@
     <!-- container -->
     <div style="height: 94.7vh;width: 100%;overflow-x: hidden;">
         <app-cytoscape-graph
-        [visualizedDraggedNode]="nodeDraggedSent"
+        [parentNode]="parentReceived"
+        [senseNode]="senseReceived"
+        [formNode]="formReceived"
         ></app-cytoscape-graph>
     </div>
 </div>

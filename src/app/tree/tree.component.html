@@ -1,0 +1,22 @@
+      <p-tree 
+      pDraggable="node" 
+      [value]="sensesFromLexo" 
+      (onNodeExpand)="nodeExpand($event)"
+      draggableNodes="true"
+      (onDragStart)="onDragStart($event)">
+        <ng-template let-node pTemplate="parentLevel"> 
+          <i class="pi pi-circle-fill" style="font-size:small;"></i> <span (mouseover)="mouseDown(node)"> {{node.label}} </span> - <small><i>{{node.pos}}</i></small>
+        </ng-template>
+        <ng-template let-node pTemplate="childF1L" > 
+          <span (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 
+        </ng-template>
+        <ng-template let-node pTemplate="childF2L" > 
+          <i class="pi pi-circle" style="color:#ff0000;font-size:small;"></i><span (mouseover)="mouseDown(node)"> {{node.label}} </span>- <br> <small><em>{{node.morphology}}</em></small><br>
+        </ng-template>
+        <ng-template let-node pTemplate="childS1L"> 
+          <span (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 
+        </ng-template>
+        <ng-template let-node pTemplate="childS2L"> 
+          <i class="pi pi-circle" style="color:#48a3e5;font-size:small;"></i> <span (mouseover)="mouseDown(node)"> {{node.label}} </span>
+        </ng-template>
+      </p-tree>  

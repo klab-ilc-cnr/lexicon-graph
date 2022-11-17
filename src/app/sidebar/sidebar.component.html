@@ -2,15 +2,17 @@
   <div class="containerFilter grid p-fluid">
     <div class="row">
       <div class="col-12">
-        <div class="p-inputgroup"> 
+        <div class="p-inputgroup">
           <span class="p-input-icon-right">
             <!-- <i class="pi pi-spin pi-spinner" *ngIf="isLoading"></i> -->
             <input type="text" pInputText formControlName="entrataLessicale">
-          </span> 
-          <button pTooltip="show/hide filter" tooltipPosition="bottom" type="button" pButton pRipple icon="pi pi-filter-fill" (click)="showFilter()"></button>
-          <button pTooltip="refresh form" tooltipPosition="bottom" id="btnIcon" type="button" pButton pRipple icon="pi pi-refresh" (click)="resetFilter()"></button>
-      </div>
-          <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}}
+          </span>
+          <button pTooltip="show/hide filter" tooltipPosition="bottom" type="button" pButton pRipple
+            icon="pi pi-filter-fill" (click)="showFilter()"></button>
+          <button pTooltip="refresh form" tooltipPosition="bottom" id="btnIcon" type="button" pButton pRipple
+            icon="pi pi-refresh" (click)="resetFilter()"></button>
+        </div>
+        <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}}
       </div>
     </div>
 
@@ -18,21 +20,37 @@
       <div id="radioBtnsGroup">
         <div class="row up">
           <div class="col-6">
-            <p-radioButton (onFocus)="onChange($event)" value="equals" name="selectedFilter" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton 
+            (onFocus)="onChange($event)" 
+            value="equals" 
+            name="selectedFilter"
+            formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Equals</label>
           </div>
           <div class="col-6">
-            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="startsWith" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton 
+            (onFocus)="onChange($event)" 
+            name="selectedFilter" 
+            value="startsWith"
+            formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Starts</label>
           </div>
         </div>
         <div class="row bottom">
           <div class="col-6">
-            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="contains" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton 
+            (onFocus)="onChange($event)" 
+            name="selectedFilter" 
+            value="contains"
+            formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Contains</label>
           </div>
           <div class="col-6">
-            <p-radioButton (onFocus)="onChange($event)" name="selectedFilter" value="ends" formControlName="selectedFilter"></p-radioButton>
+            <p-radioButton 
+            (onFocus)="onChange($event)" 
+            name="selectedFilter" 
+            value="ends"
+            formControlName="selectedFilter"></p-radioButton>
             <label for="enterFilter">Ends</label>
           </div>
         </div>
@@ -45,7 +63,7 @@
           optionLabel="name" 
           formControlName="posSelected" 
           [showClear]="true"
-          (onClick)="fetchPos()" 
+          (onClick)="fetchPos()"
           [options]="posFetched" 
           (onChange)="callServicePos()"></p-dropdown>
         </div>
@@ -55,43 +73,31 @@
           (onChange)="callServiceEntry($event)" 
           [options]="entries" 
           placeholder="Entry" 
-          optionLabel="name" 
-          [showClear]="true"
-          formControlName="entrySelected"
-          ></p-dropdown>
+          optionLabel="name"
+          [showClear]="true" 
+          formControlName="entrySelected"></p-dropdown>
         </div>
       </div>
     </div>
-
-
   </div>
   <p-divider></p-divider>
-  <!-- <p-tree  [value]="sensesFromLexo" [scrollHeight]= "scrollHeight" (onNodeExpand)="nodeSelect($event)" [virtualScrollItemSize]="50">
-  </p-tree> -->
-
   <ng-container *ngIf="isLoading">
     <div 
     [ngClass]="{'overlay500px': scrollHeight=== '500px',
-                'overlay200px': scrollHeight === '370px'}"
-    class="overlay" ></div>
+                'overlay200px': scrollHeight === '370px'}" 
+                class="overlay"></div>
     <p-progressSpinner></p-progressSpinner>
   </ng-container>
 
-    <p-tree   
-    pDraggable="node" 
-    [value]="sensesFromLexo" 
-    [scrollHeight]= "scrollHeight" 
-    (onNodeExpand)="nodeExpand($event)"
-    draggableNodes="true"
-    (onDragStart)="onDragStart($event)">
-      <ng-template let-node pTemplate="parentLevel"> 
-        <i class="pi pi-circle-fill" style="font-size:small;"></i> {{node.label}} - <small><i>{{node.pos}}</i></small>
-      </ng-template>
-      <ng-template let-node pTemplate="childF2L"> 
-        <i class="pi pi-circle" style="color:#ff0000;font-size:small;"></i> {{node.label}}
-      </ng-template>
-      <ng-template let-node pTemplate="childS2L"> 
-        <i class="pi pi-circle" style="color:#48a3e5;font-size:small;"></i> {{node.label}}
-      </ng-template>
-    </p-tree>  
+  <div>
+    <!-- tree component -->
+    <app-tree 
+    [sensesFromLexo]="sensesFromLexo" 
+    (invioNodoParent)="nodoParentReceived($event)"
+    (invioNodoSense)="nodoSenseReceived($event)"
+    (invioNodoForm)="nodoFormReceived($event)"
+    [showF]="showF"
+    [ngClass]="{'heightExtend': showF===false,
+                'heightMinimize':showF===true}"></app-tree>
+  </div>
 </form>

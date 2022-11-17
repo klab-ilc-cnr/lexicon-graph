@@ -2,6 +2,8 @@ import { Component, HostListener, Input, OnInit } from '@angular/core';
 import cytoscape from 'cytoscape';
 import { Forms } from '../shared/models/forms.model';
 import { Sense } from '../shared/models/sense.model';
+import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
+import { AddNodoService } from './servizi/add-nodo.service';
 import styleCy from './styleCy.json'
 @Component({
   selector: 'app-cytoscape-graph',
@@ -9,12 +11,17 @@ import styleCy from './styleCy.json'
   styleUrls: ['./cytoscape-graph.component.scss']
 })
 export class CytoscapeGraphComponent implements OnInit {
-  constructor() { }
+  constructor(
+    private addElement:AddNodoService) { }
   cy: any;
-  sensoDroppato: Sense;
-  formDroppato: Forms;
+  // sensoDroppato;
+  // formDroppato;
+  // parentDroppato;
 
-  @Input() visualizedDraggedNode: string;
+  // @Input() visualizedDraggedNode: string;
+  @Input() parentNode: TreeNodeCustom;
+  @Input() senseNode: TreeNodeCustom;
+  @Input() formNode: TreeNodeCustom;
   ngOnInit(): void {
     localStorage.clear();
     const that = this;
@@ -31,73 +38,28 @@ export class CytoscapeGraphComponent implements OnInit {
     });
   }
 
-
   drop(evt) {
-    this.sensoDroppato = JSON.parse(localStorage.getItem('sensoChild'));
-    this.formDroppato = JSON.parse(localStorage.getItem('formChild'));
-    
-    let sliced = this.visualizedDraggedNode.slice(0, this.visualizedDraggedNode.indexOf(' - ')).trim();
-
-    let label: string;
-    let id: string;
-    this.sensoDroppato = JSON.parse(localStorage.getItem('sensoChild'))
-    this.formDroppato = JSON.parse(localStorage.getItem('formChild'))
-    
-    // let isSense = localStorage.getItem('isAsense');
-    // let isForm = localStorage.getItem('isAform');
-    if(this.sensoDroppato!== null && this.sensoDroppato.definition.includes(sliced)){
-      label = this.sensoDroppato.definition;
-      id = this.sensoDroppato.label;
-    } 
-    if(this.formDroppato!== null && this.formDroppato.label.includes(sliced)){
-      label = this.formDroppato.label;
-      id = this.formDroppato.label;
-    } else {
-      label = sliced;
-      id = sliced;
-    }
     var pos = {
       x: evt.x, y: evt.y
     };
-    this.cy.add([{
-      group: "nodes",
-      data: {
-        id: id,
-        label: label
-      },
-      renderedPosition: pos,
-    }]);
-    // this.cy.getElementById(label).addClass('border')
-     // let isForm = localStorage.getItem('isAform');
-    //  if(this.sensoDroppato!== null && this.sensoDroppato.definition.includes(sliced)){
-    //   this.cy.getElementById(label).removeClass('lexicalEntry');
-    //   this.cy.getElementById(label).removeClass('form');
-    //   this.cy.getElementById(label).addClass('sense');
-    // } 
-    // if(this.formDroppato!== null && this.formDroppato.label.includes(sliced)){
-    //   this.cy.getElementById(label).removeClass('lexicalEntry');
-    //   this.cy.getElementById(label).removeClass('sense');
-    //   this.cy.getElementById(label).addClass('form');
-    // } else {
-    //   this.cy.getElementById(label).removeClass('sense');
-    //   this.cy.getElementById(label).removeClass('form');
-    //   this.cy.getElementById(label).removeClass('lexicalEntry');
-    // }
-
-
-
-    // if(isSense === 'true'){
-      // this.cy.getElementById(label).addClass('sense');
-
-    //   this.cy.getElementById(label).removeClass('form');
-    // }
-    // if(isForm === 'true'){
-    //   this.cy.getElementById(label).addClass('form');
-    // }
+    if(this.parentNode){
+      this.addElement.addNodo(this.cy, this.parentNode.label, this.parentNode.label,pos);
+      this.cy.getElementById(this.parentNode.label).addClass('border')
+      this.cy.getElementById(this.parentNode.label).addClass('lexicalEntry');
+    }
+    if(this.senseNode){
+      this.addElement.addNodo(this.cy, this.senseNode.label, this.senseNode.label, pos);
+      this.cy.getElementById(this.senseNode.label).addClass('border')
+      this.cy.getElementById(this.senseNode.label).addClass('sense');
+    }
+    if(this.formNode){
+      this.addElement.addNodo(this.cy, this.formNode.label, this.formNode.label, pos);
+      this.cy.getElementById(this.formNode.label).addClass('border')
+      this.cy.getElementById(this.formNode.label).addClass('form');
+    }
   }
 
  resetView(){
-  // localStorage.clear();
   this.cy.elements().style('display','none');
  }
   
