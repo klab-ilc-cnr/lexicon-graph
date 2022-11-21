@@ -6,7 +6,7 @@ import styleCy from './styleCy.json'
 @Component({
   selector: 'app-cytoscape-graph',
   templateUrl: './cytoscape-graph.component.html',
-  styleUrls: ['./cytoscape-graph.component.scss']
+  styleUrls: ['./cytoscape-graph.component.scss','../mediaqueries/mediaquery.scss']
 })
 export class CytoscapeGraphComponent implements OnInit {
   constructor(
@@ -33,6 +33,13 @@ export class CytoscapeGraphComponent implements OnInit {
   }
 
   drop(evt) {
+    console.log('parent node')
+    console.log(this.parentNode)
+    console.log('senseNode')
+    console.log(this.senseNode)
+    console.log('formNode')
+    console.log(this.formNode)
+
     var pos = {
       x: evt.x, y: evt.y
     };
@@ -56,5 +63,20 @@ export class CytoscapeGraphComponent implements OnInit {
  resetView(){
   this.cy.elements().style('display','none');
  }
-  
+
+/**
+ * 
+ * @param event checked event dello switch per visualizzare come label l'id o il valore della label visibile nel tree DA COMPLETARE
+ */
+ labelOrId(event){
+  if(event.checked === true){
+    this.cy.getElementById(this.parentNode.data).style('label',this.parentNode.label);
+    this.cy.getElementById(this.senseNode.senseInstanceName).style('label',this.senseNode.label);
+    this.cy.getElementById(this.formNode.formInstanceName).style('label',this.formNode.label);
+  } else{
+    this.cy.getElementById(this.parentNode.data).style('label',this.parentNode.data);
+    this.cy.getElementById(this.senseNode.senseInstanceName).style('label',this.senseNode.senseInstanceName);
+    this.cy.getElementById(this.formNode.formInstanceName).style('label',this.formNode.formInstanceName);
+  }
+ }
 }

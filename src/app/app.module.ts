@@ -22,6 +22,7 @@ import {ScrollPanelModule} from 'primeng/scrollpanel';
 import {DragDropModule} from 'primeng/dragdrop';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {InputSwitchModule} from 'primeng/inputswitch';
+import {SplitterModule} from 'primeng/splitter';
 
 import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -60,7 +61,8 @@ import { TreeComponent } from './tree/tree.component';
     ScrollPanelModule,
     DragDropModule,
     ProgressSpinnerModule,
-    InputSwitchModule
+    InputSwitchModule,
+    SplitterModule
   ],
   providers: [],
   bootstrap: [AppComponent]

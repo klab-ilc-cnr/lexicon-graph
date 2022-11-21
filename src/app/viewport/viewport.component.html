@@ -4,31 +4,37 @@
             <i class="pi pi-bars"></i>
         </button>
     </div>
+    <!-- <p-splitter [panelSizes]="[25,75]" [style]="{'height': '94vh'}" [minSizes]="[10,20]" layout="horizontal">  -->
 
-    <div #collapse="ngbCollapse" [(ngbCollapse)]="!expanded" [horizontal]="true" style="max-width: 350px;">
-        <div class="card" style="width: 350px; height: 94.7vh;">
-            <p-tabView>
-                <p-tabPanel header="Lexicon">
-                    <app-sidebar
-                    (invioNodoParentFromTree)="nodoParentFromSidebar($event)"
-                    (invioNodoSenseFromTree)="nodoSenseFromSidebar($event)"
-                    (invioNodoFormFromTree)="nodoFormFromSidebar($event)"
-                    (resetGraph)="resetGraph($event)"
-                    ></app-sidebar>
-                </p-tabPanel>
-                <p-tabPanel header="Ontology">
-                    to do
-                </p-tabPanel>
-            </p-tabView>
-
-        </div>
-    </div>
+        <!-- <ng-template pTemplate> -->
+            <div #collapse="ngbCollapse" [(ngbCollapse)]="!expanded" [horizontal]="true" >
+                <div class="card" style="width: 350px; height: 94.7vh;">
+                    <p-tabView>
+                        <p-tabPanel header="Lexicon">
+                            <app-sidebar
+                            (invioNodoParentFromTree)="nodoParentFromSidebar($event)"
+                            (invioNodoSenseFromTree)="nodoSenseFromSidebar($event)"
+                            (invioNodoFormFromTree)="nodoFormFromSidebar($event)"
+                            (resetGraph)="resetGraph($event)"
+                            ></app-sidebar>
+                        </p-tabPanel>
+                        <p-tabPanel header="Ontology">
+                            to do
+                        </p-tabPanel>
+                    </p-tabView>
+        
+                </div>
+            </div>
+        <!-- </ng-template> -->
+        <!-- <ng-template pTemplate> -->
     <!-- container -->
-    <div style="height: 94.7vh;width: 100%;overflow-x: hidden;">
+    <div style="height: 94.7vh;;width: 100%;overflow-x: hidden;">
         <app-cytoscape-graph
         [parentNode]="parentReceived"
         [senseNode]="senseReceived"
         [formNode]="formReceived"
         ></app-cytoscape-graph>
     </div>
+    <!-- </ng-template> -->
+    <!-- </p-splitter> -->
 </div>

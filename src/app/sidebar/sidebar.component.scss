@@ -29,7 +29,7 @@ $colorIcon: #999999;
 }
 
 ::ng-deep.p-tabview-panels{
-    height: 86.9vh;
+    height: 85.9vh;
 }
 
 form{
@@ -73,6 +73,6 @@ button#btnIcon{
     transform: translateX(0.9rem);
 }
 
-::ng-deep .p-inputswitch.p-component{
+::ng-deep #morphToggle .p-inputswitch.p-component {
     top: 15%;
 }

@@ -201,6 +201,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
           })
       }
       if (e.value.name === 'flexed') {
+        this.istanzaTreeComponent.formType = 'flexed';
+        this.istanzaTreeComponent.text = this.text;
         // espando nodi parent
         this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
           'flexed', this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
@@ -288,11 +290,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.text = "*";
     this.pos = "";
     this.resetGraph.emit(true);
-
+    this.istanzaTreeComponent.scrollToTop = true;
   }
 
   onChange(e) {
     this.searchMode = e.target.value;
+    this.istanzaTreeComponent.searchMode = this.searchMode;
+    this.istanzaTreeComponent.text = this.text;
     this.isLoading = true;
     this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
       this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {

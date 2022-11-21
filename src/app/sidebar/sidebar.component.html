@@ -13,12 +13,18 @@
             icon="pi pi-refresh" (click)="resetFilter()"></button>
         </div>
         <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}} <br>
-        <p-inputSwitch
-        formControlName="morphologicalTraits"
-        (onChange)="showHideMorphTraits($event)"
-        pTooltip="show/hide morphogical traits"
-        tooltipPosition="bottom"></p-inputSwitch>
-        <small style="font-size: smaller;"> MORPHOLOGICAL TRAITS</small>
+        <ng-container>
+          <small style="font-size: smaller;">MORPHOLOGICAL TRAITS  </small>
+        </ng-container>   
+        <ng-container>
+          <p-inputSwitch
+          id="morphToggle"
+          formControlName="morphologicalTraits"
+          (onChange)="showHideMorphTraits($event)"
+          pTooltip="show/hide morphogical traits"
+          tooltipPosition="bottom"
+          ></p-inputSwitch>
+        </ng-container>
       </div>
     </div>
 

@@ -3,6 +3,7 @@
 @media screen and (min-width: 1025px) {
     .col {
         padding-left: 0;
+        padding-right: 0; 
     }
 
     .heightExtend {
@@ -41,6 +42,10 @@
         
     }
 
+    #cy {
+        height: 92.9%;
+    }
+
 }
 
 /* BREAKPOINT schermo 1920 x 1080px */
@@ -48,6 +53,7 @@
 @media screen and (min-width: 1919px) {
     .col {
         padding-left: 0;
+        padding-right: 0; 
     }
 
     .heightExtend {
@@ -85,6 +91,11 @@
         backdrop-filter: blur(2px);
         height: 62vh;
     }
+
+    #cy {
+        height: 95%;
+    }
+    
 
 }
 
@@ -125,6 +136,10 @@
         -webkit-backdrop-filter: blur(1px);
         backdrop-filter: blur(1px);
         height: 77.5vh;
+    }
+
+    #cy{
+        height: 97.5%;
     }
 
 }

@@ -22,7 +22,6 @@ import { CytoscapeGraphComponent } from '../cytoscape-graph/cytoscape-graph.comp
   ]
 })
 export class ViewportComponent implements OnInit {  
-  
   constructor() { }
   @ViewChild(CytoscapeGraphComponent, { static: true }) istanzaCyComponent: CytoscapeGraphComponent;
   @Input() parentReceived:TreeNodeCustom;
@@ -31,7 +30,7 @@ export class ViewportComponent implements OnInit {
   expanded:boolean = true;
   ngOnInit(): void {
   }
-
+ 
   /**
    * 
    * @param $event nodi di tipo parent, form e senso ricevuti da sidebar, ricevuti a sua volta dal componente tree

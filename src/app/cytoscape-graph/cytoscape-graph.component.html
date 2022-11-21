@@ -1,3 +1,7 @@
-<button pTooltip="refresh view" tooltipPosition="bottom" style="font-size: 10px;" type="button" pButton pRipple icon="pi pi-refresh" (click)="resetView()"></button>
+<ng-container><button pTooltip="refresh view" tooltipPosition="bottom"  type="button" pButton pRipple icon="pi pi-refresh" (click)="resetView()"></button>
+    <p-inputSwitch
+    (onChange)="labelOrId($event)"
+    ></p-inputSwitch>
+  </ng-container>
 <div id="cy" pDroppable="node" (onDrop)="drop($event)">
 </div>

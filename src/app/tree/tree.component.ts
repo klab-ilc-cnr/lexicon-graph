@@ -16,7 +16,14 @@ export class TreeComponent implements OnInit, OnDestroy {
    */
   @HostListener("scroll", ["$event"]) private onScroll($event: any): void {
     if ($event.target.offsetHeight + $event.target.scrollTop >= $event.target.scrollHeight - 1) {
-      this.retrieveSenses();
+      if(this.formType === 'entry'){
+        this.retrieveSenses();
+      } else {
+        return
+      }
+    }
+    if(this.scrollToTop === true){
+      console.log('scroll to top!')
     }
   }
   scrollHeight: string;
@@ -55,8 +62,6 @@ export class TreeComponent implements OnInit, OnDestroy {
   @Input() sensesFromLexo: TreeNodeCustom[] = [];
   // DRAG event variabile per visualizzare nodo
   visualizedNode: TreeNodeCustom;
-  sensiDroppati = [];
-  formsDroppati = [];
   draggedEle: TreeNodeCustom;
 
   isLoading: boolean = false;
@@ -68,6 +73,8 @@ export class TreeComponent implements OnInit, OnDestroy {
   @Output() invioNodoSense = new EventEmitter<any>();
 
   showHideMorphTraits: boolean;
+
+  scrollToTop: boolean = false;
   
   constructor(
     private dataStorageService: DataStorageService,
@@ -88,12 +95,11 @@ export class TreeComponent implements OnInit, OnDestroy {
     let childrenForm = [];
     this.dataStorageService.fetchForms(idNode).subscribe(el => {
       el.forEach(e => {
-        let morphology = [];
+        let morphology;
         morphology = e.morphology.map(e => {
-          return `[ ` + e.trait + `-` + e.value + ` ] `
-        });
-        morphology.join('\n')
-        this.formsDroppati.push(e);
+          return  e.value
+        }).join(' ');
+
         let child2L = {
           label: e.label,
           data: e.label,
@@ -112,11 +118,11 @@ export class TreeComponent implements OnInit, OnDestroy {
     let childrenSense = [];
     this.dataStorageService.fetchSense(idNode).subscribe(el => {
       el.forEach(e => {
-        this.sensiDroppati.push(e);
         let child2L = {
           label: e.label,
           data: e.label,
           type: 'childS2L',
+          definition: e.definition,
           senseInstanceName: e.senseInstanceName,
           leaf: true
         }
