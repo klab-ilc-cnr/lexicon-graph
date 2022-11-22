@@ -37,10 +37,10 @@ export class TreeComponent implements OnInit, OnDestroy {
 * variabili alberatura
 *
 */
-  text: string = "*";
+  @Input()text: string = "*";
   searchMode: string = "startsWith";
   type: string = "";
-  pos: any = "";
+  @Input() pos: any = "";
   formType: string = "entry";
   author: string = "";
   lang: string = "";
@@ -65,6 +65,10 @@ export class TreeComponent implements OnInit, OnDestroy {
   draggedEle: TreeNodeCustom;
 
   isLoading: boolean = false;
+
+  fontS='1rem' 
+  fontSPos= '0.8rem'
+  fontIcon ='0.8rem'
   /**
    * event emitte per inviare parent node , form node e sense node
    */

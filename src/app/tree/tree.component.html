@@ -5,21 +5,22 @@
       draggableNodes="true"
       (onDragStart)="onDragStart($event)">
         <ng-template let-node pTemplate="parentLevel"> 
-          <i class="pi pi-circle-fill" style="font-size:small;"></i> <span (mouseover)="mouseDown(node)"> {{node.label}} </span><sub><i>{{node.pos}}</i></sub>
+          <i class="pi pi-circle-fill" [style.font-size]="fontIcon"></i> 
+          <span (mouseover)="mouseDown(node)"  [style.font-size]="fontS"> {{node.label}} </span><sub [style.font-size]="fontSPos"><i>{{node.pos}}</i></sub>
         </ng-template>
         <ng-template let-node pTemplate="childF1L" > 
-          <span (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 
+          <span [style.font-size]="fontS" (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 
         </ng-template>
         <ng-template let-node pTemplate="childF2L" > 
-          <i class="pi pi-circle" style="color:#ff0000;font-size:small;"></i><span (mouseover)="mouseDown(node)"> {{node.label}} </span><br>
-          <small *ngIf="showHideMorphTraits">POS: <em>{{node.morphology}},</em></small>
+          <i class="pi pi-circle" style="color:#ff0000;" [style.font-size]="fontIcon"></i><span [style.font-size]="fontS" (mouseover)="mouseDown(node)"> {{node.label}} </span><br>
+          <small [style.font-size]="fontSPos" *ngIf="showHideMorphTraits">POS: <em>{{node.morphology}},</em></small>
         </ng-template>
         <ng-template let-node pTemplate="childS1L"> 
-          <span (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 
+          <span [style.font-size]="fontS" (mouseover)="mouseDown(node)"> {{node.label}} <small>({{node.count}})</small></span> 
         </ng-template>
         <ng-template let-node pTemplate="childS2L"> 
-          <i class="pi pi-circle" style="color:#48a3e5;font-size:small;">
-          </i> <span (mouseover)="mouseDown(node)" pTooltip={{node.definition}} tooltipPosition="right">
+          <i class="pi pi-circle" style="color:#48a3e5;" [style.font-size]="fontIcon">
+          </i> <span [style.font-size]="fontS" (mouseover)="mouseDown(node)" pTooltip={{node.definition}} tooltipPosition="right">
              {{node.label}} </span>
         </ng-template>
       </p-tree>  

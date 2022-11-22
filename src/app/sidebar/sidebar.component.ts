@@ -1,7 +1,7 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
@@ -15,7 +15,7 @@ import { TreeComponent } from '../tree/tree.component';
   providers: [TreeDragDropService],
   styleUrls: ['./sidebar.component.scss','../mediaqueries/mediaquery.scss']
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class SidebarComponent implements OnInit {
   @ViewChild(TreeComponent, { static: true }) istanzaTreeComponent: TreeComponent;
   sensesFromLexo: TreeNodeCustom[] = [];
   /**
@@ -29,10 +29,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
    * variabili alberatura
    *
    */
-  text: string = "*";
+  @Input()text: string = "*";
   searchMode: string = "startsWith";
   type: string = "";
-  pos: any = "";
+  @Input() pos: any = "";
   formType: string = "entry";
   author: string = "";
   lang: string = "";
@@ -65,7 +65,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   // DRAG event variabile per visualizzare nodo
   draggedEle: TreeNodeCustom;
 
-  /**
+   /**
    * output event per inviare nodi di tipo parent, sense o form
    */
   @Output() invioNodoParentFromTree = new EventEmitter<any>();
@@ -79,6 +79,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
  * event emitter per resettare grafo se viene resettato form
  */
   @Output() resetGraph = new EventEmitter<boolean>();
+
+  changeFont: boolean;
+  fontInput ='0.9rem'
+
+  _val: Subject<boolean> = new Subject();
+@Input()
+set events(val: Subject<boolean>) {
+  this._val = val;
+}
+
+private eventsSubscription: Subscription;
 
   /**
    * 
@@ -105,7 +116,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    // this.retrieveSenses();
+    this.eventsSubscription = this._val.subscribe((x) => {
+      this.changeFont = x;
+      if(this.changeFont === true){
+        this.istanzaTreeComponent.fontS = '0.7rem';
+        this.istanzaTreeComponent.fontSPos = '0.5rem';
+        this.istanzaTreeComponent.fontIcon = '0.5rem';
+        this.fontInput = '0.7rem';
+      } else {
+        this.istanzaTreeComponent.fontS = '1rem';
+        this.istanzaTreeComponent.fontSPos = '0.8rem';
+        this.istanzaTreeComponent.fontIcon = '0.8rem';
+        this.fontInput = '0.9rem';
+      }
+   });
     this.cercaEntrataLessicale.get('entrataLessicale').valueChanges.pipe(
       debounceTime(500)
       , distinctUntilChanged()
@@ -124,6 +148,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.limit += 99;
         });
     })
+
   }
 
   retrieveSenses() {
@@ -193,6 +218,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     // toglie errore 
     if (e.value !== null) {
       if (e.value.name === 'entry') {
+        this.formType ='entry'
         this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
           this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
             if (lexicalEntry.list !== undefined) {
@@ -201,11 +227,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
           })
       }
       if (e.value.name === 'flexed') {
+        this.formType= 'flexed'
         this.istanzaTreeComponent.formType = 'flexed';
         this.istanzaTreeComponent.text = this.text;
         // espando nodi parent
         this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-          'flexed', this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+          this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
             this.totalCount = lexicalEntry.totalHits;
             lexicalEntry.list.forEach(l => {
               let flexedParent;
@@ -256,6 +283,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       });
     }
 
+  return this.formType;
   }
 
   private expandRecursive(node: TreeNode, isExpand: boolean) {
@@ -299,7 +327,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.istanzaTreeComponent.text = this.text;
     this.isLoading = true;
     this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-      this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
+      this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
         if (lexicalEntry) {
           this.isLoading = false;
         }
@@ -336,12 +364,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   /**
    * unsubscribe subscriptions
    */
-  ngOnDestroy() {
-    this.sub1.unsubscribe();
-    this.sub2.unsubscribe();
-    this.sub3.unsubscribe();
-    this.sub4.unsubscribe();
-  }
+  // ngOnDestroy() {
+  //   this.sub1.unsubscribe();
+  //   this.sub2.unsubscribe();
+  //   this.sub3.unsubscribe();
+  //   this.sub4.unsubscribe();
+  // }
 
 
 }

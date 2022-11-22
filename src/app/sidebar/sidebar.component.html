@@ -12,9 +12,9 @@
           <button pTooltip="refresh form" tooltipPosition="bottom" id="btnIcon" type="button" pButton pRipple
             icon="pi pi-refresh" (click)="resetFilter()"></button>
         </div>
-        <small><b>LEXICAL ENTRIES:</b></small> {{totalCount}} <br>
+        <small [style.font-size]="fontInput" ><b>LEXICAL ENTRIES:</b></small> <small [style.font-size]="fontInput"> {{totalCount}}</small><br>
         <ng-container>
-          <small style="font-size: smaller;">MORPHOLOGICAL TRAITS  </small>
+          <small [style.font-size]="fontInput">MORPHOLOGICAL TRAITS  </small>
         </ng-container>   
         <ng-container>
           <p-inputSwitch
@@ -105,6 +105,8 @@
   <div>
     <!-- tree component -->
     <app-tree 
+    [text]="text"
+    [pos]="pos"
     [sensesFromLexo]="sensesFromLexo" 
     (invioNodoParent)="nodoParentReceived($event)"
     (invioNodoSense)="nodoSenseReceived($event)"

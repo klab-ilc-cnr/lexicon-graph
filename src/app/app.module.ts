@@ -23,6 +23,7 @@ import {DragDropModule} from 'primeng/dragdrop';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {SplitterModule} from 'primeng/splitter';
+import { AngularResizeEventModule } from 'angular-resize-event';
 
 import { ViewportComponent } from './viewport/viewport.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -62,7 +63,8 @@ import { TreeComponent } from './tree/tree.component';
     DragDropModule,
     ProgressSpinnerModule,
     InputSwitchModule,
-    SplitterModule
+    SplitterModule,
+    AngularResizeEventModule
   ],
   providers: [],
   bootstrap: [AppComponent]

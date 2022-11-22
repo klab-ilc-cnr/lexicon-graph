@@ -2,24 +2,13 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { CytoscapeGraphComponent } from '../cytoscape-graph/cytoscape-graph.component';
+import { ResizedEvent } from 'angular-resize-event';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-viewport',
   templateUrl: './viewport.component.html',
-  styleUrls: ['./viewport.component.scss','../mediaqueries/mediaquery.scss'],
-  animations: [
-    trigger('slidein', [
-      transition(':enter', [
-        // when ngif has true
-        style({ transform: 'translateX(-100%)' }),
-        animate(250, style({ transform: 'translateX(0)' }))
-      ]),
-      transition(':leave', [
-        // when ngIf has false
-        animate(250, style({ transform: 'translateX(-100%)' }))
-      ])
-    ])
-  ]
+  styleUrls: ['./viewport.component.scss','../mediaqueries/mediaquery.scss']
 })
 export class ViewportComponent implements OnInit {  
   constructor() { }
@@ -27,7 +16,12 @@ export class ViewportComponent implements OnInit {
   @Input() parentReceived:TreeNodeCustom;
   @Input() senseReceived: TreeNodeCustom;
   @Input() formReceived: TreeNodeCustom;
+
+  eventsSubject: Subject<boolean> = new Subject();
   expanded:boolean = true;
+
+  width: number;
+  height: number;
   ngOnInit(): void {
   }
  
@@ -51,6 +45,21 @@ export class ViewportComponent implements OnInit {
     // se evento ricevuto da sidebar c è true, chiamo servizio in cytoscape c per resettare view
     if($event === true){
       this.istanzaCyComponent.resetView();
+    }
+  }
+
+  /**
+   * 
+   * @param event evento resize, se la larghezza è minore a 236 si applicano degli stili alla colonna: font e icone diminuite
+   */
+  onResized(event: ResizedEvent) {
+    this.width = event.newRect.width;
+    this.height = event.newRect.height;
+
+    if(event.newRect.width < 236){
+      this.eventsSubject.next(true);
+    } else{
+      this.eventsSubject.next(false);
     }
   }
 }
