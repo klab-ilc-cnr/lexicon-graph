@@ -8,4 +8,5 @@ export interface TreeNodeCustom extends TreeNode {
   formInstanceName?:string;
   pos: string;
   type:string;
+  definition?:string;
 }

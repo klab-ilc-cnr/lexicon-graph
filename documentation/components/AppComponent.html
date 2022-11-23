@@ -94,7 +94,7 @@
 
             <tr>
                 <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./app.component.scss</code></td>
+                <td class="col-md-9"><code>./app.component.scss,<br>mediaqueries/mediaquery.scss</code></td>
             </tr>
 
 
@@ -178,7 +178,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/app.component.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/app.component.ts:8</a></div>
                         </td>
                     </tr>
 
@@ -192,14 +192,14 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component } from &#x27;@angular/core&#x27;;
-
 @Component({
   selector: &#x27;app-root&#x27;,
   templateUrl: &#x27;./app.component.html&#x27;,
-  styleUrls: [&#x27;./app.component.scss&#x27;]
+  styleUrls: [&#x27;./app.component.scss&#x27;,&#x27;mediaqueries/mediaquery.scss&#x27;]
 })
 export class AppComponent {
   title &#x3D; &#x27;app-lexicon-graph&#x27;;
+
 }
 </code></pre>
     </div>
@@ -210,10 +210,7 @@ export class AppComponent {
 &lt;/div&gt;
 &lt;div class&#x3D;&quot;container-fluid&quot;&gt;
 &lt;div class&#x3D;&quot;row columns&quot;&gt;
-    &lt;div class&#x3D;&quot;col-3&quot;&gt;
-        &lt;app-tree-column&gt;&lt;/app-tree-column&gt;
-    &lt;/div&gt;
-    &lt;div class&#x3D;&quot;col-9&quot; style&#x3D;&quot;background-color:lightblue;&quot;&gt;
+    &lt;div class&#x3D;&quot;col&quot;&gt;
         &lt;app-viewport&gt;&lt;/app-viewport&gt;
     &lt;/div&gt;
 &lt;/div&gt;
@@ -224,14 +221,161 @@ export class AppComponent {
                 <p class="comment">
                     <code>./app.component.scss</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">.header{
-    height: 5vh;
-}
+                <pre class="line-numbers"><code class="language-scss">// .header{
+//     height: 5vh;
+// }
 
 .container-fluid{
     .columns{
-        height: 95vh;
+        height: 94.7vh;
     }
+}</code></pre>
+                <p class="comment">
+                    <code>mediaqueries/mediaquery.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">/* BREAKPOINT schermo &lt; 1920px */
+@media screen and (min-width: 1025px) {
+    .col {
+        padding-left: 0;
+        padding-right: 0; 
+    }
+
+    .heightExtend {
+        height: 63vh;
+    }
+
+    .heightMinimize {
+        height: 47vh;
+    }
+    
+    #lateralColumn{
+        width: 3%;
+    }
+    
+    .overlay500px {
+        top: 26%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        backdrop-filter: blur(1px);
+        height: 67vh;
+    }
+    
+    .overlay200px {
+        top: 47%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        height: 50vh;
+        
+    }
+
+    #cy {
+        height: 92.9%;
+    }
+
+}
+
+/* BREAKPOINT schermo 1920 x 1080px */
+
+@media screen and (min-width: 1919px) {
+    .col {
+        padding-left: 0;
+        padding-right: 0; 
+    }
+
+    .heightExtend {
+        height: 72vh;
+    }
+
+    .heightMinimize {
+        height: 60vh;
+    }
+
+    #lateralColumn{
+        width: 3%;
+    }
+
+    .overlay500px {
+        top: 19%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        height: 74vh;
+    }
+    
+    .overlay200px {
+        top: 31%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        height: 62vh;
+    }
+
+    #cy {
+        height: 95%;
+    }
+    
+
+}
+
+/* BREAKPOINT schermo 3840 x 2160 px */
+
+@media screen and (min-width: 3839px) {
+    .heightExtend {
+        height: 83vh;
+    }
+
+    .heightMinimize {
+        height: 77.5vh;
+    }
+
+    #lateralColumn{
+        width: 1%;
+    }
+
+    .overlay500px {
+        top: 9%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(1px);
+        backdrop-filter: blur(1px);
+        height: 85vh;
+    }
+    
+    .overlay200px {
+        top: 16%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 2;
+        -webkit-backdrop-filter: blur(1px);
+        backdrop-filter: blur(1px);
+        height: 77.5vh;
+    }
+
+    #cy{
+        height: 97.5%;
+    }
+
 }</code></pre>
     </div>
 
@@ -260,8 +404,8 @@ export class AppComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div  class="header">    <app-header></app-header></div><div class="container-fluid"><div class="row columns">    <div class="col-3">        <app-tree-column></app-tree-column>    </div>    <div class="col-9" style="background-color:lightblue;">        <app-viewport></app-viewport>    </div></div>  </div></div>'
-    var COMPONENTS = [{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'TreeColumnComponent', 'selector': 'app-tree-column'},{'name': 'ViewportComponent', 'selector': 'app-viewport'}];
+        var COMPONENT_TEMPLATE = '<div><div  class="header">    <app-header></app-header></div><div class="container-fluid"><div class="row columns">    <div class="col">        <app-viewport></app-viewport>    </div></div>  </div></div>'
+    var COMPONENTS = [{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'CytoscapeGraphComponent', 'selector': 'app-cytoscape-graph'},{'name': 'HeaderComponent', 'selector': 'app-header'},{'name': 'SidebarComponent', 'selector': 'app-sidebar'},{'name': 'TreeComponent', 'selector': 'app-tree'},{'name': 'ViewportComponent', 'selector': 'app-viewport'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'AppComponent'};
 </script>

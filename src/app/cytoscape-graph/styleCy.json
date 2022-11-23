@@ -4,7 +4,9 @@
     "style": {
       "width": "50",
       "height": "50",
-      "label": "data(id)"
+      "label": "data(id)",
+      "font-size": 13,
+      "text-margin-y": 6
     }
   },
   {

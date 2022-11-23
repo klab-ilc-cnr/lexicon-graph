@@ -45,6 +45,7 @@ export class ViewportComponent implements OnInit {
     // se evento ricevuto da sidebar c è true, chiamo servizio in cytoscape c per resettare view
     if($event === true){
       this.istanzaCyComponent.resetView();
+      this.istanzaCyComponent.isChecked = false;
     }
   }
 

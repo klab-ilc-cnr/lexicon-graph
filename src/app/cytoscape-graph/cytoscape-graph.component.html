@@ -2,6 +2,7 @@
   <p-inputSwitch
     pTooltip="switch label / id"
     (onChange)="labelOrId($event)"
+    [(ngModel)]="isChecked"
     ></p-inputSwitch>
   </ng-container>
 <div id="cy" pDroppable="node" (onDrop)="drop($event)">
