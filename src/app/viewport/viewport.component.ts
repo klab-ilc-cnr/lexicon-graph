@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { CytoscapeGraphComponent } from '../cytoscape-graph/cytoscape-graph.component';
 import { ResizedEvent } from 'angular-resize-event';
@@ -16,7 +15,6 @@ export class ViewportComponent implements OnInit {
   @Input() parentReceived:TreeNodeCustom;
   @Input() senseReceived: TreeNodeCustom;
   @Input() formReceived: TreeNodeCustom;
-
   eventsSubject: Subject<boolean> = new Subject();
   expanded:boolean = true;
 

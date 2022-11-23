@@ -184,6 +184,7 @@ private eventsSubscription: Subscription;
           label: e.label,
           data: e.label,
           type: 'childF2L',
+          formInstanceName: e.formInstanceName,
           morphology: morphology,
           leaf: true
         }
@@ -252,10 +253,10 @@ private eventsSubscription: Subscription;
                 if (elemento.label === 'form' && elemento.count > 0) {
                   // recupero forme
                   let tempForm = [{
-                    collapsedIcon: "pi pi-folder",
-                    expandedIcon: "pi pi-folder-open",
-                    label: elemento.label + ' (' + elemento.count + ')',
+                    label: elemento.label,
                     leaf: false,
+                    count: elemento.count,
+                    type: 'childF1L',
                     children: []
                   }];
 
