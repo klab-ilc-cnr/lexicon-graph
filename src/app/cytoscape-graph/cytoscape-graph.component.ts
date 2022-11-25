@@ -39,38 +39,37 @@ export class CytoscapeGraphComponent implements OnInit {
     });
 
     this.isChecked = false;
-    this.cy.removeListener('mouseover', 'node');
-    this.cy.on('mouseover', 'node', (event) => {
-      let contentToRender;
-      if (event.target.data().type === 'childS2L') {
-        contentToRender = event.target.data().definition;
-      } else {
-        contentToRender = event.target.data().id;
+    this.cy.removeListener('mouseover', 'node.sense');
+    this.cy.on('mouseover', 'node.sense', (event) => {
+      if(event.target.data().definition.length > 18){
+        event.target.popperRefObj = event.target.popper({
+          content: () => {
+            var content = document.createElement("div-popper");
+            content.innerHTML = event.target.data().definition;
+            var x = document.createElement("style");
+            var t = document.createTextNode("div-popper{background-color: #f6f8fa;color: black;border: 1px solid  #c4c8cc;border-radius: 5px;font-size:small;padding:10px;width:200px;}");
+            x.appendChild(t);
+            document.head.appendChild(x);
+            document.body.appendChild(content);
+            return content;
+          },
+          popper: {
+            placement: 'top',
+          }
+        }); 
       }
-      event.target.popperRefObj = event.target.popper({
-        content: () => {
-          var content = document.createElement("div-popper");
-          content.innerHTML = contentToRender;
-          var x = document.createElement("style");
-          var t = document.createTextNode("div-popper{background-color: #f6f8fa;color: black;border: 1px solid  #c4c8cc;border-radius: 5px;font-size:small;padding:10px}");
-          x.appendChild(t);
-          document.head.appendChild(x);
-          document.body.appendChild(content);
-          return content;
-        },
-        popper: {
-          placement: 'top',
-        }
-      });
+
     });
 
-    this.cy.removeListener('mouseout', 'node');
-    this.cy.on('mouseout', 'node', (event) => {
+    this.cy.removeListener('mouseout', 'node.sense');
+    this.cy.on('mouseout', 'node.sense', (event) => {
+      if(event.target.data().definition.length > 18){
       if (event.target.popper) {
         event.target.popperRefObj.state.elements.popper.remove();
         event.target.popperRefObj.destroy();
       }
-    })
+    }
+    });
   }
 
   /**
@@ -78,8 +77,9 @@ export class CytoscapeGraphComponent implements OnInit {
    * @param evt drop: aggiungo il nodo in base alle informazioni recuperate dal componente tree
    */
   drop(evt) {
+    // coordinate del mouse per posizionamento nodo
     var pos = {
-      x: evt.x, y: evt.y
+      x: evt.layerX, y: evt.layerY
     };
     if (this.parentNode) {
       this.parentNodeElements.push(this.parentNode);

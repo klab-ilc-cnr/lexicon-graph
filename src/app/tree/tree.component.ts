@@ -1,6 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { NodeService } from '../shared/servizi/node.service';
@@ -21,9 +20,6 @@ export class TreeComponent implements OnInit, OnDestroy {
       } else {
         return
       }
-    }
-    if(this.scrollToTop === true){
-      console.log('scroll to top!')
     }
   }
   scrollHeight: string;
@@ -78,7 +74,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   showHideMorphTraits: boolean;
 
-  scrollToTop: boolean = false;
+  // scrollToTop: boolean = false;
   
   constructor(
     private dataStorageService: DataStorageService,
@@ -237,7 +233,7 @@ export class TreeComponent implements OnInit, OnDestroy {
   retrieveSenses() {
     this.isLoading = true;
     this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-      this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
+      this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
         if (lexicalEntry) {
           this.isLoading = false;
         }

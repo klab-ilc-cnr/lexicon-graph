@@ -17,6 +17,7 @@ import { TreeComponent } from '../tree/tree.component';
 })
 export class SidebarComponent implements OnInit {
   @ViewChild(TreeComponent, { static: true }) istanzaTreeComponent: TreeComponent;
+
   sensesFromLexo: TreeNodeCustom[] = [];
   /**
    * subscription
@@ -148,7 +149,6 @@ private eventsSubscription: Subscription;
           this.limit += 99;
         });
     })
-
   }
 
   retrieveSenses() {
@@ -287,6 +287,11 @@ private eventsSubscription: Subscription;
   return this.formType;
   }
 
+  /**
+   * 
+   * @param node nodi dell'alberatura
+   * @param isExpand controllo per espandere o meno alberatura
+   */
   private expandRecursive(node: TreeNode, isExpand: boolean) {
     node.expanded = isExpand;
     if (node.children) {
@@ -295,6 +300,13 @@ private eventsSubscription: Subscription;
       });
     }
   }
+
+
+  collapseAll(){
+    this.sensesFromLexo.forEach( node => {
+        this.expandRecursive(node, false);
+    } );
+}
 
   showFilter() {
     this.showF = !this.showF;
@@ -319,7 +331,7 @@ private eventsSubscription: Subscription;
     this.text = "*";
     this.pos = "";
     this.resetGraph.emit(true);
-    this.istanzaTreeComponent.scrollToTop = true;
+    this.collapseAll();
   }
 
   onChange(e) {
@@ -362,6 +374,7 @@ private eventsSubscription: Subscription;
   totalCountReceived($event){
     this.totalCount = $event;
   }
+  
   /**
    * unsubscribe subscriptions
    */
