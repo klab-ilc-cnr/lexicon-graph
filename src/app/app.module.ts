@@ -8,21 +8,21 @@ import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontaweso
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './header/header.component';
-import {ButtonModule} from 'primeng/button';
-import {SidebarModule} from 'primeng/sidebar';
-import {TreeModule} from 'primeng/tree';
-import {InputTextModule} from 'primeng/inputtext';
-import {TabViewModule} from 'primeng/tabview';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import {DropdownModule} from 'primeng/dropdown';
-import {DividerModule} from 'primeng/divider';
-import {ScrollerModule} from 'primeng/scroller'
-import {TooltipModule} from 'primeng/tooltip';
-import {ScrollPanelModule} from 'primeng/scrollpanel';
-import {DragDropModule} from 'primeng/dragdrop';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {SplitterModule} from 'primeng/splitter';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { TreeModule } from 'primeng/tree';
+import { InputTextModule } from 'primeng/inputtext';
+import { TabViewModule } from 'primeng/tabview';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { DropdownModule } from 'primeng/dropdown';
+import { DividerModule } from 'primeng/divider';
+import { ScrollerModule } from 'primeng/scroller'
+import { TooltipModule } from 'primeng/tooltip';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { DragDropModule } from 'primeng/dragdrop';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { SplitterModule } from 'primeng/splitter';
 import { AngularResizeEventModule } from 'angular-resize-event';
 
 import { ViewportComponent } from './viewport/viewport.component';
@@ -30,6 +30,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CytoscapeGraphComponent } from './cytoscape-graph/cytoscape-graph.component';
 import { TreeComponent } from './tree/tree.component';
+import { ResizeDirective } from './resize.directive';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { TreeComponent } from './tree/tree.component';
     ViewportComponent,
     SidebarComponent,
     CytoscapeGraphComponent,
-    TreeComponent
+    TreeComponent,
+    ResizeDirective
   ],
   imports: [
     BrowserModule,
@@ -71,7 +73,7 @@ import { TreeComponent } from './tree/tree.component';
 })
 
 export class AppModule {
-   constructor(library: FaIconLibrary) {
+  constructor(library: FaIconLibrary) {
 
-   }
- }
+  }
+}

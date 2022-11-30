@@ -1,38 +1,44 @@
 <div class="main-layout">
     <div id="lateralColumn">
-        <button id="button-sidebar" (click)="expanded = !expanded" mat-icon-button>
+        <button id="button-sidebar" (click)="expandedSidebar()" mat-icon-button>
             <i class="pi pi-bars"></i>
         </button>
     </div>
-            <div 
-            id="resizable"
-            *ngIf="expanded"
-            (resized)="onResized($event)"
-            style="width:350px; overflow: hidden;">
-                <div class="card" style=" height: 94.7vh;">
-                    <p-tabView>
-                        <p-tabPanel header="Lexicon">
-                            <app-sidebar
-                            [events]="eventsSubject"
-                            (invioNodoParentFromTree)="nodoParentFromSidebar($event)"
-                            (invioNodoSenseFromTree)="nodoSenseFromSidebar($event)"
-                            (invioNodoFormFromTree)="nodoFormFromSidebar($event)"
-                            (resetGraph)="resetGraph($event)"
-                            ></app-sidebar>
-                        </p-tabPanel>
-                        <!-- <p-tabPanel header="Ontology">
-                            to do
-                        </p-tabPanel> -->
-                    </p-tabView>
-        
-                </div>
-            </div>
-    <!-- container -->
-    <div style="height: 94.7vh;width: 100%;overflow-x: hidden;">
-        <app-cytoscape-graph
-        [parentNode]="parentReceived"
-        [senseNode]="senseReceived"
-        [formNode]="formReceived"
-        ></app-cytoscape-graph>
+    <div class="flex-container">
+      <div 
+      class="flex-item card" 
+      id="first"
+      #firstElement
+      (resized)="onResized($event)"
+      style="max-width:50%;
+      min-width: 8%;"
+      [ngStyle]="{'display': expanded === true ? 'block': 'none'}">
+        <p-tabView>
+            <p-tabPanel header="Lexicon">
+                <app-sidebar
+                style="overflow-y:hidden"
+                [events]="eventsSubject"
+                (invioNodoParentFromTree)="nodoParentFromSidebar($event)"
+                (invioNodoSenseFromTree)="nodoSenseFromSidebar($event)"
+                (invioNodoFormFromTree)="nodoFormFromSidebar($event)"
+                (resetGraph)="resetGraph($event)"
+                ></app-sidebar>
+            </p-tabPanel>
+            <!-- <p-tabPanel header="Ontology">
+                to do
+            </p-tabPanel> -->
+         </p-tabView>
+      </div>
+      <div class="grabber" 
+      [expanded]="expanded" appResize [leftResize]="firstElement" [rightResize]="rightElement"></div>
+      <div class="flex-item" #rightElement 
+      id="second"
+      style="overflow: hidden;">
+     <app-cytoscape-graph
+      [parentNode]="parentReceived"
+      [senseNode]="senseReceived"
+      [formNode]="formReceived"
+     ></app-cytoscape-graph>
+      </div>
     </div>
-</div>
+  </div>

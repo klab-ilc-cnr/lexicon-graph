@@ -7,46 +7,56 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'app-viewport',
   templateUrl: './viewport.component.html',
-  styleUrls: ['./viewport.component.scss','../mediaqueries/mediaquery.scss']
+  styleUrls: ['./viewport.component.scss', '../mediaqueries/mediaquery.scss']
 })
-export class ViewportComponent implements OnInit {  
+export class ViewportComponent implements OnInit {
+
   constructor() { }
   @ViewChild(CytoscapeGraphComponent, { static: true }) istanzaCyComponent: CytoscapeGraphComponent;
-  @Input() parentReceived:TreeNodeCustom;
+  @Input() parentReceived: TreeNodeCustom;
   @Input() senseReceived: TreeNodeCustom;
   @Input() formReceived: TreeNodeCustom;
   eventsSubject: Subject<boolean> = new Subject();
-  expanded:boolean = true;
+  expanded: boolean = true;
 
   width: number;
   height: number;
   ngOnInit(): void {
   }
- 
+
   /**
    * 
    * @param $event nodi di tipo parent, form e senso ricevuti da sidebar, ricevuti a sua volta dal componente tree
    */
-  nodoParentFromSidebar($event){
+  nodoParentFromSidebar($event) {
     this.parentReceived = $event;
   }
 
-  nodoSenseFromSidebar($event){
+  nodoSenseFromSidebar($event) {
     this.senseReceived = $event;
   }
 
-  nodoFormFromSidebar($event){
+  nodoFormFromSidebar($event) {
     this.formReceived = $event;
   }
 
-  resetGraph($event){
+  resetGraph($event) {
     // se evento ricevuto da sidebar c è true, chiamo servizio in cytoscape c per resettare view
-    if($event === true){
+    if ($event === true) {
       this.istanzaCyComponent.resetView();
       this.istanzaCyComponent.isChecked = false;
     }
   }
 
+  expandedSidebar() {
+    this.expanded = !this.expanded;
+    let left = document.getElementById('first');
+    let right = document.getElementById('second');
+    if (this.expanded === false) {
+      left.style.flex = `0 5 25%`;
+      right.style.flex = `0 5 75%`
+    }
+  }
   /**
    * 
    * @param event evento resize, se la larghezza è minore a 236 si applicano degli stili alla colonna: font e icone diminuite
@@ -55,9 +65,9 @@ export class ViewportComponent implements OnInit {
     this.width = event.newRect.width;
     this.height = event.newRect.height;
 
-    if(event.newRect.width < 236){
+    if (event.newRect.width < 236) {
       this.eventsSubject.next(true);
-    } else{
+    } else {
       this.eventsSubject.next(false);
     }
   }

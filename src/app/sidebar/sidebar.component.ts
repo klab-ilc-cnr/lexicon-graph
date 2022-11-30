@@ -13,7 +13,7 @@ import { TreeComponent } from '../tree/tree.component';
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   providers: [TreeDragDropService],
-  styleUrls: ['./sidebar.component.scss','../mediaqueries/mediaquery.scss']
+  styleUrls: ['./sidebar.component.scss', '../mediaqueries/mediaquery.scss']
 })
 export class SidebarComponent implements OnInit {
   @ViewChild(TreeComponent, { static: true }) istanzaTreeComponent: TreeComponent;
@@ -30,7 +30,7 @@ export class SidebarComponent implements OnInit {
    * variabili alberatura
    *
    */
-  @Input()text: string = "*";
+  @Input() text: string = "*";
   searchMode: string = "startsWith";
   type: string = "";
   @Input() pos: any = "";
@@ -59,16 +59,16 @@ export class SidebarComponent implements OnInit {
   posFetched = [];
 
   elFetched: string;
-  
+
   listener;
 
-  showMorphTraits:boolean = false;
+  showMorphTraits: boolean = false;
   // DRAG event variabile per visualizzare nodo
   draggedEle: TreeNodeCustom;
 
-   /**
-   * output event per inviare nodi di tipo parent, sense o form
-   */
+  /**
+  * output event per inviare nodi di tipo parent, sense o form
+  */
   @Output() invioNodoParentFromTree = new EventEmitter<any>();
   @Output() invioNodoSenseFromTree = new EventEmitter<any>();
   @Output() invioNodoFormFromTree = new EventEmitter<any>();
@@ -76,21 +76,22 @@ export class SidebarComponent implements OnInit {
   parentSent: TreeNodeCustom;
   senseSent: TreeNodeCustom;
   formSent: TreeNodeCustom;
-/** 
- * event emitter per resettare grafo se viene resettato form
- */
+  /** 
+   * event emitter per resettare grafo se viene resettato form
+   */
   @Output() resetGraph = new EventEmitter<boolean>();
 
   changeFont: boolean;
-  fontInput ='0.9rem'
+  fontInput = '0.9rem'
+  heightTree: number;
 
   _val: Subject<boolean> = new Subject();
-@Input()
-set events(val: Subject<boolean>) {
-  this._val = val;
-}
+  @Input()
+  set events(val: Subject<boolean>) {
+    this._val = val;
+  }
 
-private eventsSubscription: Subscription;
+  private eventsSubscription: Subscription;
 
   /**
    * 
@@ -119,7 +120,7 @@ private eventsSubscription: Subscription;
   ngOnInit(): void {
     this.eventsSubscription = this._val.subscribe((x) => {
       this.changeFont = x;
-      if(this.changeFont === true){
+      if (this.changeFont === true) {
         this.istanzaTreeComponent.fontS = '0.7rem';
         this.istanzaTreeComponent.fontSPos = '0.5rem';
         this.istanzaTreeComponent.fontIcon = '0.5rem';
@@ -130,7 +131,7 @@ private eventsSubscription: Subscription;
         this.istanzaTreeComponent.fontIcon = '0.8rem';
         this.fontInput = '0.9rem';
       }
-   });
+    });
     this.cercaEntrataLessicale.get('entrataLessicale').valueChanges.pipe(
       debounceTime(500)
       , distinctUntilChanged()
@@ -212,14 +213,68 @@ private eventsSubscription: Subscription;
       posSel = ""
     }
     this.pos = posSel;
-    this.retrieveSenses();
+    if (this.formType === 'flexed') {
+      this.retrieveFlexed();
+    } else {
+      this.retrieveSenses();
+    }
+  }
+
+  /**
+   * metodo private per recuperare item flexed. Metodo riutilizzato nel filtro pos per mantenere aperte le forme nel caso sia selezionato flexed
+   */
+  private retrieveFlexed() {
+    this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+      this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+        this.totalCount = lexicalEntry.totalHits;
+        lexicalEntry.list.forEach(l => {
+          let flexedParent;
+          flexedParent = [{
+            collapsedIcon: "pi pi-folder",
+            expandedIcon: "pi pi-folder-open",
+            label: l.label,
+            leaf: false,
+            type: "parentLevel",
+            children: []
+          }];
+          this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
+          this.elFetched = l.lexicalEntryInstanceName;
+        });
+        this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
+          el.elements.forEach(elemento => {
+            if (elemento.label === 'form' && elemento.count > 0) {
+              // recupero forme
+              let tempForm = [{
+                label: elemento.label,
+                leaf: false,
+                count: elemento.count,
+                type: 'childF1L',
+                children: []
+              }];
+
+              this.sensesFromLexo.forEach(el => {
+                el.children = tempForm
+              })
+              this.sensesFromLexo.forEach(node => {
+                this.expandRecursive(node, true);
+              });
+              // chiamata metodo privato
+              let childrenForm = this.addFormChildren(this.elFetched);
+              // apre children
+              tempForm.forEach(el => {
+                el.children = childrenForm;
+              })
+            }
+          })
+        });
+      });
   }
 
   callServiceEntry(e) {
     // toglie errore 
     if (e.value !== null) {
       if (e.value.name === 'entry') {
-        this.formType ='entry'
+        this.formType = 'entry'
         this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
           this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
             if (lexicalEntry.list !== undefined) {
@@ -228,54 +283,10 @@ private eventsSubscription: Subscription;
           })
       }
       if (e.value.name === 'flexed') {
-        this.formType= 'flexed'
+        this.formType = 'flexed'
         this.istanzaTreeComponent.formType = 'flexed';
         this.istanzaTreeComponent.text = this.text;
-        // espando nodi parent
-        this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-          this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
-            this.totalCount = lexicalEntry.totalHits;
-            lexicalEntry.list.forEach(l => {
-              let flexedParent;
-              flexedParent = [{
-                collapsedIcon: "pi pi-folder",
-                expandedIcon: "pi pi-folder-open",
-                label: l.label,
-                leaf: false,
-                type: "parentLevel",
-                children: []
-              }];
-              this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
-              this.elFetched = l.lexicalEntryInstanceName;
-            });
-            this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
-              el.elements.forEach(elemento => {
-                if (elemento.label === 'form' && elemento.count > 0) {
-                  // recupero forme
-                  let tempForm = [{
-                    label: elemento.label,
-                    leaf: false,
-                    count: elemento.count,
-                    type: 'childF1L',
-                    children: []
-                  }];
-
-                  this.sensesFromLexo.forEach(el => {
-                    el.children = tempForm
-                  })
-                  this.sensesFromLexo.forEach(node => {
-                    this.expandRecursive(node, true);
-                  });
-                  // chiamata metodo privato
-                  let childrenForm = this.addFormChildren(this.elFetched);
-                  // apre children
-                  tempForm.forEach(el => {
-                    el.children = childrenForm;
-                  })
-                }
-              })
-            });
-          });
+        this.retrieveFlexed();
       }
     } else {
       // collapse nodi espansi
@@ -284,7 +295,7 @@ private eventsSubscription: Subscription;
       });
     }
 
-  return this.formType;
+    return this.formType;
   }
 
   /**
@@ -302,18 +313,18 @@ private eventsSubscription: Subscription;
   }
 
 
-  collapseAll(){
-    this.sensesFromLexo.forEach( node => {
-        this.expandRecursive(node, false);
-    } );
-}
+  collapseAll() {
+    this.sensesFromLexo.forEach(node => {
+      this.expandRecursive(node, false);
+    });
+  }
 
   showFilter() {
     this.showF = !this.showF;
   }
 
-  showHideMorphTraits($event){
-    if($event.checked === true){
+  showHideMorphTraits($event) {
+    if ($event.checked === true) {
       this.istanzaTreeComponent.showHideMorphTraits = true;
     } else {
       this.istanzaTreeComponent.showHideMorphTraits = false;
@@ -330,6 +341,7 @@ private eventsSubscription: Subscription;
     this.searchMode = "startsWith";
     this.text = "*";
     this.pos = "";
+    this.showF = false;
     this.resetGraph.emit(true);
     this.collapseAll();
   }
@@ -338,18 +350,12 @@ private eventsSubscription: Subscription;
     this.searchMode = e.target.value;
     this.istanzaTreeComponent.searchMode = this.searchMode;
     this.istanzaTreeComponent.text = this.text;
-    this.isLoading = true;
-    this.sub1 = this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-      this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
-        if (lexicalEntry) {
-          this.isLoading = false;
-        }
-        if (lexicalEntry.list !== undefined) {
-          this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
-        }
-        this.totalCount = lexicalEntry.totalHits;
-        this.limit += 99;
-      })
+    // this.isLoading = true;
+    if (this.formType === 'flexed') {
+      this.retrieveFlexed();
+    } else {
+      this.retrieveSenses();
+    }
   }
 
   /**
@@ -371,10 +377,10 @@ private eventsSubscription: Subscription;
     this.invioNodoFormFromTree.emit(this.formSent)
   }
 
-  totalCountReceived($event){
+  totalCountReceived($event) {
     this.totalCount = $event;
   }
-  
+
   /**
    * unsubscribe subscriptions
    */

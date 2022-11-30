@@ -1,9 +1,18 @@
-<ng-container><button pTooltip="refresh view" tooltipPosition="bottom"  type="button" pButton pRipple icon="pi pi-refresh" (click)="resetView()"></button>
+<ng-container>
+  <button 
+  pTooltip="refresh view" 
+  tooltipPosition="bottom"
+  type="button" 
+  pButton 
+  pRipple 
+  icon="pi pi-refresh"
+  (click)="resetView()"></button>
   <p-inputSwitch
     pTooltip="switch label / id"
     (onChange)="labelOrId($event)"
     [(ngModel)]="isChecked"
     ></p-inputSwitch>
   </ng-container>
-<div id="cy" pDroppable="node" (onDrop)="drop($event)">
+<div id="cy" 
+pDroppable="node" (onDrop)="drop($event)">
 </div>

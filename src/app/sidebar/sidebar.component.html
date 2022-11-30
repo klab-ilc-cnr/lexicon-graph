@@ -20,7 +20,7 @@
           <p-inputSwitch
           id="morphToggle"
           formControlName="morphologicalTraits"
-          (onChange)="showHideMorphTraits($event)"
+          (onChange)="showHideMorphTraits($event)" 
           pTooltip="show/hide morphogical traits"
           tooltipPosition="bottom"
           ></p-inputSwitch>
@@ -37,7 +37,7 @@
             value="equals" 
             name="selectedFilter"
             formControlName="selectedFilter"></p-radioButton>
-            <label for="enterFilter">Equals</label>
+            <label  [style.font-size]="fontInput" for="enterFilter">Equals</label>
           </div>
           <div class="col-6">
             <p-radioButton 
@@ -45,7 +45,7 @@
             name="selectedFilter" 
             value="startsWith"
             formControlName="selectedFilter"></p-radioButton>
-            <label for="enterFilter">Starts</label>
+            <label  [style.font-size]="fontInput" for="enterFilter">Starts</label>
           </div>
         </div>
         <div class="row bottom">
@@ -55,7 +55,7 @@
             name="selectedFilter" 
             value="contains"
             formControlName="selectedFilter"></p-radioButton>
-            <label for="enterFilter">Contains</label>
+            <label  [style.font-size]="fontInput" for="enterFilter">Contains</label>
           </div>
           <div class="col-6">
             <p-radioButton 
@@ -63,7 +63,7 @@
             name="selectedFilter" 
             value="ends"
             formControlName="selectedFilter"></p-radioButton>
-            <label for="enterFilter">Ends</label>
+            <label  [style.font-size]="fontInput" for="enterFilter">Ends</label>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@
     <p-progressSpinner></p-progressSpinner>
   </ng-container>
     <!-- tree component -->
-    <app-tree 
+    <app-tree
     [text]="text"
     [pos]="pos"
     [sensesFromLexo]="sensesFromLexo" 
@@ -111,7 +111,9 @@
     (invioNodoForm)="nodoFormReceived($event)"
     (invioTotalCount)="totalCountReceived($event)"
     [showF]="showF"
-    [ngClass]="{'heightExtend': showF===false,
-                'heightMinimize':showF===true}"
+    [ngClass]="{'heightExtend': !showF,
+                'heightMinimize': showF,
+                'resizeHeightExtend': changeFont&& !showF,
+                'resizeHeighMinimize': changeFont && showF}"
                 ></app-tree>
 </form>

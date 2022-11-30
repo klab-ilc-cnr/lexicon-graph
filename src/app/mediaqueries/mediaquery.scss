@@ -2,7 +2,12 @@
 @media screen and (min-width: 1025px) {
     .col {
         padding-left: 0;
-        padding-right: 0; 
+        padding-right: 0;
+    }
+
+    #lateralColumn {
+        height: 94.7vh;
+        width: 3%;
     }
 
     .heightExtend {
@@ -10,13 +15,22 @@
     }
 
     .heightMinimize {
-        height: 47vh;
+        height: 46vh;
     }
-    
-    #lateralColumn{
-        width: 3%;
+
+    .resizeHeightExtend {
+        height: 50vh;
     }
-    
+
+    .resizeHeighMinimize {
+        height: 20vh;
+    }
+
+    .flex-item {
+        height: 94.7vh;
+    }
+
+
     .overlay500px {
         top: 26%;
         bottom: 0;
@@ -27,7 +41,7 @@
         backdrop-filter: blur(1px);
         height: 67vh;
     }
-    
+
     .overlay200px {
         top: 47%;
         bottom: 0;
@@ -38,7 +52,7 @@
         -webkit-backdrop-filter: blur(2px);
         backdrop-filter: blur(2px);
         height: 50vh;
-        
+
     }
 
     #cy {
@@ -52,7 +66,7 @@
 @media screen and (min-width: 1919px) {
     .col {
         padding-left: 0;
-        padding-right: 0; 
+        padding-right: 0;
     }
 
     .heightExtend {
@@ -60,11 +74,24 @@
     }
 
     .heightMinimize {
-        height: 60vh;
+        height: 58.9vh;
     }
 
-    #lateralColumn{
+    .resizeHeightExtend {
+        height: 67vh;
+    }
+
+    .resizeHeighMinimize {
+        height: 43vh;
+    }
+
+    #lateralColumn {
+        height: 95.9vh;
         width: 3%;
+    }
+
+    .flex-item {
+        height: 95.9vh;
     }
 
     .overlay500px {
@@ -78,7 +105,7 @@
         backdrop-filter: blur(2px);
         height: 74vh;
     }
-    
+
     .overlay200px {
         top: 31%;
         bottom: 0;
@@ -94,7 +121,7 @@
     #cy {
         height: 95%;
     }
-    
+
 
 }
 
@@ -109,8 +136,13 @@
         height: 77.5vh;
     }
 
-    #lateralColumn{
-        width: 1%;
+    #lateralColumn {
+        height: 97vh;
+        width: 3%;
+    }
+
+    .flex-item {
+        height: 97vh;
     }
 
     .overlay500px {
@@ -124,7 +156,7 @@
         backdrop-filter: blur(1px);
         height: 85vh;
     }
-    
+
     .overlay200px {
         top: 16%;
         bottom: 0;
@@ -137,7 +169,7 @@
         height: 77.5vh;
     }
 
-    #cy{
+    #cy {
         height: 97.5%;
     }
 
