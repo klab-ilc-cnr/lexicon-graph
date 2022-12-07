@@ -76,3 +76,19 @@ button#btnIcon{
 ::ng-deep #morphToggle .p-inputswitch.p-component {
     top: 15%;
 }
+
+#scrollToTop{
+    position: absolute;
+    top: 95%;
+    right: 9%;
+    background-color: #80808033;
+    padding: 2px;
+    border-radius: 3px;
+    a{
+        text-decoration: none;
+        #icon{
+            color:#888888;
+            cursor:pointer;
+        }
+    }
+}

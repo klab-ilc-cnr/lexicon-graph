@@ -16,6 +16,7 @@ export class ViewportComponent implements OnInit {
   @Input() parentReceived: TreeNodeCustom;
   @Input() senseReceived: TreeNodeCustom;
   @Input() formReceived: TreeNodeCustom;
+  draggedNodeReceived: TreeNodeCustom;
   eventsSubject: Subject<boolean> = new Subject();
   expanded: boolean = true;
 
@@ -34,6 +35,10 @@ export class ViewportComponent implements OnInit {
 
   nodoSenseFromSidebar($event) {
     this.senseReceived = $event;
+  }
+
+  nodoDraggedFromSidebar($event) {
+    this.draggedNodeReceived = $event;
   }
 
   nodoFormFromSidebar($event) {

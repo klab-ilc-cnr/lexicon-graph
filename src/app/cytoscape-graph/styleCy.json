@@ -4,7 +4,6 @@
     "style": {
       "width": "50",
       "height": "50",
-      "label": "data(id)",
       "font-size": 13,
       "text-margin-y": 6
     }
@@ -20,17 +19,38 @@
   {
     "selector": "node.sense",
     "style": {
-     "border-color" : "#48a3e5"
+     "border-color" : "#48a3e5",
+     "label": "data(id)"
     }
   },
   {
     "selector": "node.form",
     "style": {
-     "border-color" : "#ff0000"
+     "border-color" : "#ff0000",
+     "label": "data(id)"
     }
   },
   {
     "selector": "node.lexicalEntry",
+    "style": {
+     "border-color" : "#000000",
+     "label": "data(id)"
+    }
+  },
+  {
+    "selector": "node.senseLabel",
+    "style": {
+     "border-color" : "#48a3e5"
+    }
+  },
+  {
+    "selector": "node.formLabel",
+    "style": {
+     "border-color" : "#ff0000"
+    }
+  },
+  {
+    "selector": "node.lexicalEntryLabel",
     "style": {
      "border-color" : "#000000"
     }

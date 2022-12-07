@@ -1,4 +1,5 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { TreeNode } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
@@ -15,7 +16,8 @@ export class TreeComponent implements OnInit, OnDestroy {
    */
   @HostListener("scroll", ["$event"]) private onScroll($event: any): void {
     if ($event.target.offsetHeight + $event.target.scrollTop >= $event.target.scrollHeight - 1) {
-      if(this.formType === 'entry'){
+      // per chiamo metodo retrievesense solo se il campo del filtro è vuoto
+      if (this.formType === 'entry') {
         this.retrieveSenses();
       } else {
         return
@@ -28,16 +30,17 @@ export class TreeComponent implements OnInit, OnDestroy {
    * subscription
    */
   sub1: Subscription;
+  sub2: Subscription;
 
   /**
 * variabili alberatura
 *
 */
-  @Input()text: string = "*";
+  @Input() text: string = "*";
   searchMode: string = "startsWith";
   type: string = "";
   @Input() pos: any = "";
-  formType: string = "entry";
+  @Input() formType: string = "entry";
   author: string = "";
   lang: string = "";
   status: string = "";
@@ -62,20 +65,24 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
 
-  fontS='1rem' 
-  fontSPos= '0.8rem'
-  fontIcon ='0.8rem'
+  fontS = '1rem'
+  fontSPos = '0.8rem'
+  fontIcon = '0.8rem'
+
+  nodeExpanded = [];
+
+  elFetched: string;
+
   /**
    * event emitte per inviare parent node , form node e sense node
    */
   @Output() invioNodoParent = new EventEmitter<any>();
   @Output() invioNodoForm = new EventEmitter<any>();
   @Output() invioNodoSense = new EventEmitter<any>();
+  @Output() invioVisualizedNode = new EventEmitter<any>();
 
   showHideMorphTraits: boolean;
 
-  // scrollToTop: boolean = false;
-  
   constructor(
     private dataStorageService: DataStorageService,
     private nodeService: NodeService) { }
@@ -97,7 +104,7 @@ export class TreeComponent implements OnInit, OnDestroy {
       el.forEach(e => {
         let morphology;
         morphology = e.morphology.map(e => {
-          return  e.value
+          return e.value
         }).join(' ');
 
         let child2L = {
@@ -109,6 +116,7 @@ export class TreeComponent implements OnInit, OnDestroy {
           leaf: true
         }
         childrenForm.push(child2L);
+        this.nodeExpanded.push(child2L);
       });
     });
     return childrenForm;
@@ -122,11 +130,15 @@ export class TreeComponent implements OnInit, OnDestroy {
           label: e.label,
           data: e.label,
           type: 'childS2L',
+          lemma: e.lemma,
+          lexicalEntryInstanceName: e.lexicalEntryInstanceName,
+          pos: e.pos,
           definition: e.definition,
           senseInstanceName: e.senseInstanceName,
           leaf: true
         }
         childrenSense.push(child2L);
+        this.nodeExpanded.push(child2L);
       });
     });
     return childrenSense;
@@ -137,8 +149,13 @@ export class TreeComponent implements OnInit, OnDestroy {
    * @param event espansione nodo per aprire children alberatura
    */
   nodeExpand(event) {
-    let idNode = event.node.data;
-    if (event.node.parent === undefined) {
+    this.nodeExpanded.push(event.node);
+    this.openNodes(event.node);
+  }
+
+  private openNodes(node) {
+    let idNode = node.data;
+    if (node.parent === undefined) {
       this.sub1 = this.dataStorageService.fetchElements(idNode).subscribe(el => {
         let tempForm = [];
         let tempSense = [];
@@ -166,7 +183,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             tempForm.forEach(el => {
               el.children = childrenForm;
             })
-            event.node.children = tempForm;
+            node.children = tempForm;
           }
           if (elemento.label === 'sense') {
             if (elemento.count > 0) {
@@ -189,7 +206,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             tempSense.forEach(el => {
               el.children = childrenSense;
             })
-            event.node.children = [...event.node.children, ...tempSense];
+            node.children = [...node.children, ...tempSense];
           }
         })
       });
@@ -209,7 +226,8 @@ export class TreeComponent implements OnInit, OnDestroy {
   onDragStart(event) {
     let parentNode;
     let formChid;
-    let senseChild;    
+    let senseChild;
+    this.invioVisualizedNode.emit(this.visualizedNode);
     if (this.visualizedNode.type === 'parentLevel') {
       parentNode = this.visualizedNode;
       this.invioNodoParent.emit(parentNode);
@@ -243,9 +261,121 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.totalCount = lexicalEntry.totalHits;
         this.invioTotalCount.emit(this.totalCount)
         this.limit += 99;
-      })
+      });
+    // if (this.nodeExpanded.length > 0) {
+    //   let flexedParent;
+    //   this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+    //     this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+    //       this.totalCount = lexicalEntry.totalHits;
+    //       lexicalEntry.list.forEach(l => {
+    //         flexedParent = [{
+    //           collapsedIcon: "pi pi-folder",
+    //           expandedIcon: "pi pi-folder-open",
+    //           label: l.label,
+    //           leaf: false,
+    //           type: "parentLevel",
+    //           children: []
+    //         }];
+    //         this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
+    //         this.nodeExpanded.forEach(node => {
+    //           if (node.type === 'parentLevel') {
+    //             this.elFetched = node.data;
+    //           }
+    //           return this.elFetched;
+    //         })
+    //       });
+    //       this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
+    //         el.elements.forEach(elemento => {
+    //           // salvo il parametro leaf in una variabile,
+    //           // se la forma o il senso non ha figli non viene visualizzata la freccia per espandere nodo, altrimenti si
+    //           let isLeaf: boolean;
+    //           if (elemento.label === 'form') {
+    //             if (elemento.count > 0) {
+    //               isLeaf = false;
+    //             } else {
+    //               isLeaf = true;
+    //             }
+    //             // recupero forme
+    //             let tempForm = [{
+    //               label: elemento.label,
+    //               leaf: isLeaf,
+    //               count: elemento.count,
+    //               type: 'childF1L',
+    //               children: []
+    //             }];
+
+    //             // chiamata metodo privato
+    //             let childrenForm = this.addFormChildren(this.elFetched);
+
+    //             this.sensesFromLexo.forEach(el => {
+    //               el.children = tempForm
+    //             })
+    //             this.sensesFromLexo.forEach(node => {
+    //               if (node.data === this.elFetched) {
+    //                 this.expandRecursive(node, true);
+    //               }
+    //             });
+
+    //             // apre children
+    //             tempForm.forEach(el => {
+    //               el.children = childrenForm;
+    //             });
+    //             flexedParent.children = tempForm;
+    //           }
+
+    //           if (elemento.label === 'sense') {
+    //             if (elemento.count > 0) {
+    //               isLeaf = false;
+    //             } else {
+    //               isLeaf = true;
+    //             }
+    //             // recupero sensi
+    //             let tempSense = [{
+    //               label: elemento.label,
+    //               leaf: isLeaf,
+    //               count: elemento.count,
+    //               type: 'childS1L',
+    //               children: []
+    //             }]
+
+    //             // chiamata metodo privato
+    //             let childrenSense = this.addSenseChildren(this.elFetched);
+
+    //             this.sensesFromLexo.forEach(el => {
+    //               el.children = tempSense
+    //             });
+    //             // flexedParent.children = [...flexedParent.children, ...tempSense];
+    //             this.sensesFromLexo.forEach(node => {
+    //               if (node.data === this.elFetched) {
+    //                 this.expandRecursive(node, true);
+    //               }
+    //             });
+
+    //             // apre children
+    //             tempSense.forEach(el => {
+    //               el.children = childrenSense;
+    //             });
+    //             flexedParent.children = [...flexedParent.children, ...tempSense];
+    //           }
+    //         })
+    //       });
+    //     });
+    // }
   }
 
+  /**
+    * 
+    * @param node nodi dell'alberatura
+    * @param isExpand controllo per espandere o meno alberatura
+    */
+  private expandRecursive(node: TreeNode, isExpand: boolean) {
+    node.expanded = isExpand;
+    if (node.children) {
+      node.children.forEach(childNode => {
+        this.expandRecursive(childNode, isExpand);
+      });
+    }
+  }
   /**
   * unsubscribe subscriptions
   */

@@ -30,7 +30,7 @@ export class SidebarComponent implements OnInit {
    * variabili alberatura
    *
    */
-  @Input() text: string = "*";
+  text: string = "*";
   searchMode: string = "startsWith";
   type: string = "";
   @Input() pos: any = "";
@@ -41,6 +41,7 @@ export class SidebarComponent implements OnInit {
   offset: number = 0;
   limit: number = 200;
   totalCount: number;
+  scrollToTop: boolean;
 
   /**
    * filtri ricerca 
@@ -55,7 +56,6 @@ export class SidebarComponent implements OnInit {
     { name: 'entry' },
     { name: 'flexed' }
   ];
-
   posFetched = [];
 
   elFetched: string;
@@ -72,6 +72,7 @@ export class SidebarComponent implements OnInit {
   @Output() invioNodoParentFromTree = new EventEmitter<any>();
   @Output() invioNodoSenseFromTree = new EventEmitter<any>();
   @Output() invioNodoFormFromTree = new EventEmitter<any>();
+  @Output() invioDraggedNodeFromTree = new EventEmitter<any>();
 
   parentSent: TreeNodeCustom;
   senseSent: TreeNodeCustom;
@@ -118,6 +119,7 @@ export class SidebarComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.scrollToTop = false;
     this.eventsSubscription = this._val.subscribe((x) => {
       this.changeFont = x;
       if (this.changeFont === true) {
@@ -147,7 +149,7 @@ export class SidebarComponent implements OnInit {
             this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
           }
           this.totalCount = lexicalEntry.totalHits;
-          this.limit += 99;
+          this.limit += 200;
         });
     })
   }
@@ -173,6 +175,7 @@ export class SidebarComponent implements OnInit {
     * @returns array di figli di tipo form
     */
   private addFormChildren(idNode) {
+
     let childrenForm = [];
     this.dataStorageService.fetchForms(idNode).subscribe(el => {
       el.forEach(e => {
@@ -280,6 +283,7 @@ export class SidebarComponent implements OnInit {
             if (lexicalEntry.list !== undefined) {
               this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
             }
+            this.totalCount = lexicalEntry.totalHits;
           })
       }
       if (e.value.name === 'flexed') {
@@ -339,11 +343,15 @@ export class SidebarComponent implements OnInit {
     this.cercaEntrataLessicale.get('morphologicalTraits').setValue(false);
     this.istanzaTreeComponent.showHideMorphTraits = false;
     this.searchMode = "startsWith";
+    this.formType = "entry";
     this.text = "*";
     this.pos = "";
     this.showF = false;
     this.resetGraph.emit(true);
     this.collapseAll();
+    this.scrollToTop = true;
+    let top = document.getElementsByTagName('a');
+    top[1].click();
   }
 
   onChange(e) {
@@ -370,6 +378,10 @@ export class SidebarComponent implements OnInit {
   nodoSenseReceived($event) {
     this.senseSent = $event;
     this.invioNodoSenseFromTree.emit(this.senseSent);
+  }
+
+  draggedNodeReceived($event) {
+    this.invioDraggedNodeFromTree.emit($event);
   }
 
   nodoFormReceived($event) {

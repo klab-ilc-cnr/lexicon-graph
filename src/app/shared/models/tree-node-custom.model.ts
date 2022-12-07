@@ -3,10 +3,11 @@ import { LexicalEntry } from "./lexicalEntry.model";
 export interface TreeNodeCustom extends TreeNode {
   lexicalEntry: LexicalEntry[];
   lexicalEntryInstanceName: string | undefined;
-  count?:number,
+  count?: number,
   senseInstanceName?: string;
-  formInstanceName?:string;
+  formInstanceName?: string;
   pos: string;
-  type:string;
-  definition?:string;
+  type: string;
+  lemma?: string;
+  definition?: string;
 }

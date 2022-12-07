@@ -21,6 +21,7 @@
                 (invioNodoParentFromTree)="nodoParentFromSidebar($event)"
                 (invioNodoSenseFromTree)="nodoSenseFromSidebar($event)"
                 (invioNodoFormFromTree)="nodoFormFromSidebar($event)"
+                (invioDraggedNodeFromTree)="nodoDraggedFromSidebar($event)"
                 (resetGraph)="resetGraph($event)"
                 ></app-sidebar>
             </p-tabPanel>
@@ -38,6 +39,7 @@
       [parentNode]="parentReceived"
       [senseNode]="senseReceived"
       [formNode]="formReceived"
+      [draggedNode]="draggedNodeReceived"
      ></app-cytoscape-graph>
       </div>
     </div>
