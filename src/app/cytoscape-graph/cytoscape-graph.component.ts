@@ -72,37 +72,37 @@ export class CytoscapeGraphComponent implements OnInit {
     ]);
 
     this.isChecked = false;
-    // this.cy.removeListener('mouseover', 'node.sense');
-    // this.cy.on('mouseover', 'node.sense', (event) => {
-    //   if (event.target.data().definition.length > 18) {
-    //     event.target.popperRefObj = event.target.popper({
-    //       content: () => {
-    //         var content = document.createElement("div-popper");
-    //         content.innerHTML = event.target.data().definition;
-    //         var x = document.createElement("style");
-    //         var t = document.createTextNode("div-popper{background-color: #f6f8fa;color: black;border: 1px solid  #c4c8cc;border-radius: 5px;font-size:small;padding:10px;width:200px;}");
-    //         x.appendChild(t);
-    //         document.head.appendChild(x);
-    //         document.body.appendChild(content);
-    //         return content;
-    //       },
-    //       popper: {
-    //         placement: 'top',
-    //       }
-    //     });
-    //   }
+    this.cy.removeListener('mouseover', 'node.sense,node.senseLabel');
+    this.cy.on('mouseover', 'node.sense,node.senseLabel', (event) => {
+      if (event.target.data().definition.length > 18) {
+        event.target.popperRefObj = event.target.popper({
+          content: () => {
+            var content = document.createElement("div-popper");
+            content.innerHTML = event.target.data().definition;
+            var x = document.createElement("style");
+            var t = document.createTextNode("div-popper{background-color: #f6f8fa;color: black;border: 1px solid  #c4c8cc;border-radius: 5px;font-size:small;padding:10px;width:200px;}");
+            x.appendChild(t);
+            document.head.appendChild(x);
+            document.body.appendChild(content);
+            return content;
+          },
+          popper: {
+            placement: 'top',
+          }
+        });
+      }
 
-    // });
+    });
 
-    // this.cy.removeListener('mouseout', 'node.sense');
-    // this.cy.on('mouseout', 'node.sense', (event) => {
-    //   if (event.target.data().definition.length > 18) {
-    //     if (event.target.popper) {
-    //       event.target.popperRefObj.state.elements.popper.remove();
-    //       event.target.popperRefObj.destroy();
-    //     }
-    //   }
-    // });
+    this.cy.removeListener('mouseout', 'node.sense,node.senseLabel');
+    this.cy.on('mouseout', 'node.sense,node.senseLabel', (event) => {
+      if (event.target.data().definition.length > 18) {
+        if (event.target.popper) {
+          event.target.popperRefObj.state.elements.popper.remove();
+          event.target.popperRefObj.destroy();
+        }
+      }
+    });
   }
 
   /**
@@ -119,7 +119,7 @@ export class CytoscapeGraphComponent implements OnInit {
       this.addElement.addNodo(this.cy, this.parentNode.data, this.parentNode.label, pos, this.parentNode.type, this.parentNode.pos);
       this.cy.getElementById(this.parentNode.data).addClass('border')
       this.cy.getElementById(this.parentNode.data).addClass('lexicalEntry');
-      if (this.isChecked === true) {
+      if (this.isChecked === false) {
         this.cy.getElementById(this.parentNode.data).removeClass('lexicalEntry');
         this.cy.getElementById(this.parentNode.data).addClass('lexicalEntryLabel');
         // this.cy.getElementById(this.parentNode.data).style('label', this.parentNode.label);
@@ -130,7 +130,7 @@ export class CytoscapeGraphComponent implements OnInit {
       this.addElement.addNodo(this.cy, this.senseNode.senseInstanceName, this.senseNode.label, pos, this.senseNode.type, this.senseNode.pos, this.senseNode.lexicalEntryInstanceName, this.senseNode.lemma, this.senseNode.definition);
       this.cy.getElementById(this.senseNode.senseInstanceName).addClass('border')
       this.cy.getElementById(this.senseNode.senseInstanceName).addClass('sense');
-      if (this.isChecked === true) {
+      if (this.isChecked === false) {
         this.cy.getElementById(this.senseNode.senseInstanceName).removeClass('sense');
         this.cy.getElementById(this.senseNode.senseInstanceName).addClass('senseLabel');
         // this.cy.getElementById(this.senseNode.senseInstanceName).style('label', this.senseNode.label);
@@ -141,7 +141,7 @@ export class CytoscapeGraphComponent implements OnInit {
       this.addElement.addNodo(this.cy, this.formNode.formInstanceName, this.formNode.formInstanceName, pos, this.formNode.type);
       this.cy.getElementById(this.formNode.formInstanceName).addClass('border')
       this.cy.getElementById(this.formNode.formInstanceName).addClass('form');
-      if (this.isChecked === true) {
+      if (this.isChecked === false) {
         this.cy.getElementById(this.formNode.formInstanceName).style('label', this.formNode.label);
       }
     }
@@ -165,7 +165,7 @@ export class CytoscapeGraphComponent implements OnInit {
    */
   labelOrId(event) {
     this.isChecked = event.checked;
-    if (event.checked === true) {
+    if (event.checked === false) {
       for (var i = 0; i < this.parentNodeElements.length; i++) {
         this.cy.getElementById(this.parentNodeElements[i].data).removeClass('lexicalEntry');
         this.cy.getElementById(this.parentNodeElements[i].data).addClass('lexicalEntryLabel');

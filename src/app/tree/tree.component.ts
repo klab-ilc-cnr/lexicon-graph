@@ -70,8 +70,13 @@ export class TreeComponent implements OnInit, OnDestroy {
   fontIcon = '0.8rem'
 
   nodeExpanded = [];
+  nodeSensesExpanded = [];
+  nodeFormsExpanded = [];
 
-  elFetched: string;
+  nodeparentsFetched = [];
+  parentExpanded: boolean = false;
+  senseExpanded: boolean = false;
+  formExpanded: boolean = false;
 
   /**
    * event emitte per inviare parent node , form node e sense node
@@ -116,7 +121,7 @@ export class TreeComponent implements OnInit, OnDestroy {
           leaf: true
         }
         childrenForm.push(child2L);
-        this.nodeExpanded.push(child2L);
+        // this.nodeExpanded.push(child2L);
       });
     });
     return childrenForm;
@@ -138,7 +143,7 @@ export class TreeComponent implements OnInit, OnDestroy {
           leaf: true
         }
         childrenSense.push(child2L);
-        this.nodeExpanded.push(child2L);
+        // this.nodeExpanded.push(child2L);
       });
     });
     return childrenSense;
@@ -149,7 +154,25 @@ export class TreeComponent implements OnInit, OnDestroy {
    * @param event espansione nodo per aprire children alberatura
    */
   nodeExpand(event) {
-    this.nodeExpanded.push(event.node);
+    if (event.node.type === 'parentLevel') {
+      this.nodeExpanded.push(event.node);
+    }
+
+    if (event.node.type === 'childS1L') {
+      this.nodeExpanded.push(event.node);
+      event.node.children.forEach(child => {
+        this.nodeSensesExpanded.push(child);
+      })
+    }
+
+    if (event.node.type === 'childF1L') {
+      this.nodeExpanded.push(event.node);
+      event.node.children.forEach(child => {
+        this.nodeFormsExpanded.push(child);
+      })
+    }
+
+
     this.openNodes(event.node);
   }
 
@@ -262,105 +285,99 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.invioTotalCount.emit(this.totalCount)
         this.limit += 99;
       });
-    // if (this.nodeExpanded.length > 0) {
-    //   let flexedParent;
-    //   this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
-    //     this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
-    //       this.totalCount = lexicalEntry.totalHits;
-    //       lexicalEntry.list.forEach(l => {
-    //         flexedParent = [{
-    //           collapsedIcon: "pi pi-folder",
-    //           expandedIcon: "pi pi-folder-open",
-    //           label: l.label,
-    //           leaf: false,
-    //           type: "parentLevel",
-    //           children: []
-    //         }];
-    //         this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
-    //         this.nodeExpanded.forEach(node => {
-    //           if (node.type === 'parentLevel') {
-    //             this.elFetched = node.data;
-    //           }
-    //           return this.elFetched;
-    //         })
-    //       });
-    //       this.sub2 = this.dataStorageService.fetchElements(this.elFetched).subscribe(el => {
-    //         el.elements.forEach(elemento => {
-    //           // salvo il parametro leaf in una variabile,
-    //           // se la forma o il senso non ha figli non viene visualizzata la freccia per espandere nodo, altrimenti si
-    //           let isLeaf: boolean;
-    //           if (elemento.label === 'form') {
-    //             if (elemento.count > 0) {
-    //               isLeaf = false;
-    //             } else {
-    //               isLeaf = true;
-    //             }
-    //             // recupero forme
-    //             let tempForm = [{
-    //               label: elemento.label,
-    //               leaf: isLeaf,
-    //               count: elemento.count,
-    //               type: 'childF1L',
-    //               children: []
-    //             }];
+    if (this.nodeExpanded.length > 0) {
+      let flexedParent;
+      this.dataStorageService.fetchLexicalEntries(this.text, this.searchMode, this.type, this.pos,
+        this.formType, this.author, this.lang, this.status, this.offset, this.limit).subscribe(lexicalEntry => {
+          this.totalCount = lexicalEntry.totalHits;
+          lexicalEntry.list.forEach(l => {
+            flexedParent = [{
+              collapsedIcon: "pi pi-folder",
+              expandedIcon: "pi pi-folder-open",
+              label: l.label,
+              leaf: false,
+              type: "parentLevel",
+              children: []
+            }];
+            this.sensesFromLexo = this.nodeService.convertFromLexicalSenses(lexicalEntry);
+            this.nodeparentsFetched = this.nodeExpanded.map(node => {
+              if (node.type === 'parentLevel') {
+                return node.data;
+              }
+            })
+          });
+          this.nodeparentsFetched.forEach(parentNode => {
+            let tempForm = [];
+            let tempSense = [];
+            this.sub2 = this.dataStorageService.fetchElements(parentNode).subscribe(el => {
+              el.elements.forEach(elemento => {
+                // salvo il parametro leaf in una variabile,
+                // se la forma o il senso non ha figli non viene visualizzata la freccia per espandere nodo, altrimenti si
+                let isLeaf: boolean;
+                if (elemento.label === 'form') {
+                  if (elemento.count > 0) {
+                    isLeaf = false;
+                  } else {
+                    isLeaf = true;
+                  }
+                  // recupero forme
+                  tempForm = [{
+                    label: elemento.label,
+                    leaf: isLeaf,
+                    count: elemento.count,
+                    type: 'childF1L',
+                    children: []
+                  }];
 
-    //             // chiamata metodo privato
-    //             let childrenForm = this.addFormChildren(this.elFetched);
+                  // chiamata metodo privato
+                  let childrenForm = this.addFormChildren(parentNode);
 
-    //             this.sensesFromLexo.forEach(el => {
-    //               el.children = tempForm
-    //             })
-    //             this.sensesFromLexo.forEach(node => {
-    //               if (node.data === this.elFetched) {
-    //                 this.expandRecursive(node, true);
-    //               }
-    //             });
+                  this.sensesFromLexo.forEach(el => {
+                    if (el.data === parentNode) {
+                      el.children = tempForm;
+                      this.expandRecursive(el, true);
+                    }
+                  })
+                  // apre children
+                  tempForm.forEach(el => {
+                    el.children = childrenForm;
+                  });
+                }
+                if (elemento.label === 'sense') {
+                  if (elemento.count > 0) {
+                    isLeaf = false;
+                  } else {
+                    isLeaf = true;
+                  }
+                  // recupero sensi
+                  tempSense = [{
+                    label: elemento.label,
+                    leaf: isLeaf,
+                    count: elemento.count,
+                    type: 'childS1L',
+                    children: []
+                  }]
 
-    //             // apre children
-    //             tempForm.forEach(el => {
-    //               el.children = childrenForm;
-    //             });
-    //             flexedParent.children = tempForm;
-    //           }
+                  // chiamata metodo privato
+                  let childrenSense = this.addSenseChildren(parentNode);
+                  let formExpanded;
+                  this.sensesFromLexo.forEach(el => {
+                    if (el.data === parentNode) {
+                      el.children = [...el.children, ...tempSense];
+                      this.expandRecursive(el, true);
+                    }
+                  });
+                  // apre children
+                  tempSense.forEach(el => {
+                    el.children = childrenSense;
+                  });
+                }
+              })
+            });
+          })
 
-    //           if (elemento.label === 'sense') {
-    //             if (elemento.count > 0) {
-    //               isLeaf = false;
-    //             } else {
-    //               isLeaf = true;
-    //             }
-    //             // recupero sensi
-    //             let tempSense = [{
-    //               label: elemento.label,
-    //               leaf: isLeaf,
-    //               count: elemento.count,
-    //               type: 'childS1L',
-    //               children: []
-    //             }]
-
-    //             // chiamata metodo privato
-    //             let childrenSense = this.addSenseChildren(this.elFetched);
-
-    //             this.sensesFromLexo.forEach(el => {
-    //               el.children = tempSense
-    //             });
-    //             // flexedParent.children = [...flexedParent.children, ...tempSense];
-    //             this.sensesFromLexo.forEach(node => {
-    //               if (node.data === this.elFetched) {
-    //                 this.expandRecursive(node, true);
-    //               }
-    //             });
-
-    //             // apre children
-    //             tempSense.forEach(el => {
-    //               el.children = childrenSense;
-    //             });
-    //             flexedParent.children = [...flexedParent.children, ...tempSense];
-    //           }
-    //         })
-    //       });
-    //     });
-    // }
+        });
+    }
   }
 
   /**
@@ -372,7 +389,24 @@ export class TreeComponent implements OnInit, OnDestroy {
     node.expanded = isExpand;
     if (node.children) {
       node.children.forEach(childNode => {
-        this.expandRecursive(childNode, isExpand);
+        // se il nodo figlio di primo livello è di tipo forma
+        if (childNode.type === 'childF1L') {
+          // se sono presenti nodi di tipo child 2 livello di tipo sense li apro
+          if (this.nodeFormsExpanded.length > 0) {
+            this.expandRecursive(childNode, true);
+          } else {
+            this.expandRecursive(childNode, false);
+          }
+        }
+        // se il nodo figlio di primo livello è di tipo senso
+        if (childNode.type === 'childS1L') {
+          // se sono presenti nodi di tipo child 2 livello di tipo sense li apro
+          if (this.nodeSensesExpanded.length > 0) {
+            this.expandRecursive(childNode, true);
+          } else {
+            this.expandRecursive(childNode, false);
+          }
+        }
       });
     }
   }

@@ -24,7 +24,6 @@ export class SidebarComponent implements OnInit {
    */
   sub1: Subscription;
   sub2: Subscription;
-  sub3: Subscription;
   sub4: Subscription;
   /**
    * variabili alberatura
@@ -138,6 +137,10 @@ export class SidebarComponent implements OnInit {
       debounceTime(500)
       , distinctUntilChanged()
     ).subscribe((text: string) => {
+      // svuoto array node parent, node senses e node form
+      this.istanzaTreeComponent.nodeExpanded = [];
+      this.istanzaTreeComponent.nodeSensesExpanded = [];
+      this.istanzaTreeComponent.nodeFormsExpanded = [];
       this.isLoading = true;
       this.dataStorageService.fetchLexicalEntries(text, this.searchMode, this.type, this.pos,
         this.formType, this.author, this.lang, this.status, this.offset, this.limit).pipe(take(1)).subscribe(lexicalEntry => {
@@ -352,6 +355,10 @@ export class SidebarComponent implements OnInit {
     this.scrollToTop = true;
     let top = document.getElementsByTagName('a');
     top[1].click();
+    // svuoto array node parent, node senses e node form
+    this.istanzaTreeComponent.nodeExpanded = [];
+    this.istanzaTreeComponent.nodeSensesExpanded = [];
+    this.istanzaTreeComponent.nodeFormsExpanded = [];
   }
 
   onChange(e) {
@@ -396,12 +403,11 @@ export class SidebarComponent implements OnInit {
   /**
    * unsubscribe subscriptions
    */
-  // ngOnDestroy() {
-  //   this.sub1.unsubscribe();
-  //   this.sub2.unsubscribe();
-  //   this.sub3.unsubscribe();
-  //   this.sub4.unsubscribe();
-  // }
+  ngOnDestroy() {
+    this.sub1.unsubscribe();
+    this.sub2.unsubscribe();
+    this.sub4.unsubscribe();
+  }
 
 
 }
