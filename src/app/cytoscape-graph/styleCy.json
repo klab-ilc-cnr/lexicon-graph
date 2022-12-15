@@ -56,10 +56,21 @@
     }
   },
   {
+    "selector": "node.dblclic",
+    "style": {
+     "border-color" : "orange",
+     "label": "data(id)"
+    }
+  },
+  {
     "selector": "edge",
     "style":{
       "target-arrow-shape": "triangle",
-      "curve-style": "straight"
+      "curve-style": "bezier",
+      "label": "data(label)",
+      "font-size": 13,
+      "text-opacity":1,
+      "text-background-opacity": 0
     }
   }
 ]

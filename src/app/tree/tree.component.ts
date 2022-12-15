@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { NodeService } from '../shared/servizi/node.service';
@@ -17,7 +17,7 @@ export class TreeComponent implements OnInit, OnDestroy {
   @HostListener("scroll", ["$event"]) private onScroll($event: any): void {
     if ($event.target.offsetHeight + $event.target.scrollTop >= $event.target.scrollHeight - 1) {
       // per chiamo metodo retrievesense solo se il campo del filtro è vuoto
-      if (this.formType === 'entry') {
+      if (this.formType === 'entry' || this.nodeExpanded.length > 299) {
         this.retrieveSenses();
       } else {
         return
@@ -31,6 +31,14 @@ export class TreeComponent implements OnInit, OnDestroy {
    */
   sub1: Subscription;
   sub2: Subscription;
+
+  _val: Subject<boolean> = new Subject();
+  @Input()
+  set events(val: Subject<boolean>) {
+    this._val = val;
+  }
+
+  private eventsSubscription: Subscription;
 
   /**
 * variabili alberatura
@@ -96,6 +104,14 @@ export class TreeComponent implements OnInit, OnDestroy {
     this.scrollHeight = '500px';
     // recupero lista entrate lessicali da visualizzare nell'alberatura TO DO VIRTUAL SCROLL
     this.retrieveSenses();
+    this.eventsSubscription = this._val.subscribe((x) => {
+      if (x === true) {
+        console.log('reset btn clicked')
+        this.sensesFromLexo.forEach(el => {
+          this.expandRecursive(el, false);
+        });
+      }
+    });
   }
 
   /**

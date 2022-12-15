@@ -7,7 +7,7 @@ export class AddNodoService {
 
   constructor() { }
 
-  addNodo(cy, id, label, pos, type, posNodo?, lexicalEntryInstanceName?, lemma?, definition?) {
+  addNodo(cy, id, label, pos, type, posNodo?, lexicalEntryInstanceName?, lemma?, definition?, definitionSplitt?) {
     cy.add([{
       group: "nodes",
       data: {
@@ -17,11 +17,11 @@ export class AddNodoService {
         pos: posNodo,
         lexicalEntryInstanceName: lexicalEntryInstanceName,
         lemma: lemma,
-        definition: definition
+        definition: definition,
+        definitionSplitt: definitionSplitt
       },
       renderedPosition: pos,
     }]);
-    // cy.getElementById(id).style('display', 'element');
   }
 
 }

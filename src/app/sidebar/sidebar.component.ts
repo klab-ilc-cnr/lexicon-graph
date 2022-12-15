@@ -85,6 +85,8 @@ export class SidebarComponent implements OnInit {
   fontInput = '0.9rem'
   heightTree: number;
 
+  resetEventsSubject: Subject<boolean> = new Subject();
+
   _val: Subject<boolean> = new Subject();
   @Input()
   set events(val: Subject<boolean>) {
@@ -314,17 +316,35 @@ export class SidebarComponent implements OnInit {
     node.expanded = isExpand;
     if (node.children) {
       node.children.forEach(childNode => {
-        this.expandRecursive(childNode, isExpand);
+        // se il nodo figlio di primo livello è di tipo forma
+        if (childNode.type === 'childF1L') {
+          // se sono presenti nodi di tipo child 2 livello di tipo sense li apro
+          if (this.istanzaTreeComponent.nodeFormsExpanded.length > 0) {
+            this.expandRecursive(childNode, false);
+          }
+        }
+        // se il nodo figlio di primo livello è di tipo senso
+        if (childNode.type === 'childS1L') {
+          // se sono presenti nodi di tipo child 2 livello di tipo sense li apro
+          if (this.istanzaTreeComponent.nodeSensesExpanded.length > 0) {
+            this.expandRecursive(childNode, false);
+          }
+        }
       });
+      // if (node.children) {
+      //   node.children.forEach(childNode => {
+      //     this.expandRecursive(childNode, isExpand);
+      //   });
     }
-  }
+  };
 
 
-  collapseAll() {
-    this.sensesFromLexo.forEach(node => {
-      this.expandRecursive(node, false);
-    });
-  }
+
+  // collapseAll() {
+  //   this.sensesFromLexo.forEach(node => {
+  //     this.expandRecursive(node, false);
+  //   });
+  // }
 
   showFilter() {
     this.showF = !this.showF;
@@ -351,7 +371,6 @@ export class SidebarComponent implements OnInit {
     this.pos = "";
     this.showF = false;
     this.resetGraph.emit(true);
-    this.collapseAll();
     this.scrollToTop = true;
     let top = document.getElementsByTagName('a');
     top[1].click();
@@ -359,6 +378,7 @@ export class SidebarComponent implements OnInit {
     this.istanzaTreeComponent.nodeExpanded = [];
     this.istanzaTreeComponent.nodeSensesExpanded = [];
     this.istanzaTreeComponent.nodeFormsExpanded = [];
+    this.resetEventsSubject.next(true);
   }
 
   onChange(e) {
@@ -408,6 +428,4 @@ export class SidebarComponent implements OnInit {
     this.sub2.unsubscribe();
     this.sub4.unsubscribe();
   }
-
-
 }

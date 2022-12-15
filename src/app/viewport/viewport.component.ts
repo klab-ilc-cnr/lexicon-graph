@@ -22,6 +22,7 @@ export class ViewportComponent implements OnInit {
 
   width: number;
   height: number;
+
   ngOnInit(): void {
   }
 

@@ -1,4 +1,4 @@
-<ng-container>
+<div style="position:absolute;z-index:1;">
   <button 
   pTooltip="refresh view" 
   tooltipPosition="bottom"
@@ -6,13 +6,15 @@
   pButton 
   pRipple 
   icon="pi pi-refresh"
+  class="btnViewport"
   (click)="resetView()"></button>
   <p-inputSwitch
     pTooltip="switch label / id"
     (onChange)="labelOrId($event)"
     [(ngModel)]="isChecked"
+    class="btnViewport"
     ></p-inputSwitch>
-  </ng-container>
+</div>
 <div id="cy" 
 pDroppable="node" (onDrop)="drop($event)">
 </div>
