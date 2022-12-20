@@ -8,7 +8,8 @@ export class AddNodoService {
   constructor() { }
 
   addNodo(cy, id, label, pos, type, posNodo?, lexicalEntryInstanceName?, lemma?, definition?, definitionSplitt?) {
-    cy.add([{
+    let newNode: [];
+    newNode = cy.add([{
       group: "nodes",
       data: {
         id: id,
@@ -22,6 +23,7 @@ export class AddNodoService {
       },
       renderedPosition: pos,
     }]);
+    return newNode;
   }
 
 }

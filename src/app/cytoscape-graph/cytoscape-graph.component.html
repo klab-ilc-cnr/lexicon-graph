@@ -1,19 +1,38 @@
-<div style="position:absolute;z-index:1;">
+<div style="border: 1px solid #dbdbdb;">
   <button 
-  pTooltip="refresh view" 
+  style="width: 58px;"
   tooltipPosition="bottom"
-  type="button" 
+  type="button"
   pButton 
-  pRipple 
-  icon="pi pi-refresh"
-  class="btnViewport"
-  (click)="resetView()"></button>
-  <p-inputSwitch
-    pTooltip="switch label / id"
-    (onChange)="labelOrId($event)"
-    [(ngModel)]="isChecked"
-    class="btnViewport"
-    ></p-inputSwitch>
+  pRipple
+  (click)="expandedToolbar()"
+  >
+  <fa-icon *ngIf="!expanded" icon="chevron-down"></fa-icon>
+  <fa-icon *ngIf="expanded" icon="chevron-up"></fa-icon>
+</button>
+</div>
+<div 
+[ngStyle]="{'display': expanded === true ? 'block': 'none'}"
+id="toolbar">
+  <app-toolbar
+  (resetEvent)="resetFromToolbar($event)"
+  (errorEmitter)="errorFromToolbar($event)"
+  (warningEmitter)="warningFromToolbar($event)"
+  [cy]="cy"
+  [parentNodeElements]="parentNodeElements"
+  [senseNodeElements]="senseNodeElements"
+  [formNodeElements]="formNodeElements"
+  [senso1]="senso1"
+  [senso2]="senso2"></app-toolbar>
+</div>
+<div class="alert alert-danger" *ngIf="error">
+  <h1>An Error Occurred!</h1>
+  <p>{{ error }}</p>
+</div>
+<div class="alert alert-warning" *ngIf="warning" style="text-align:center;">
+  <h1>
+    <fa-icon icon="triangle-exclamation"></fa-icon></h1>
+    <h1>No elements retrieved!</h1>
 </div>
 <div id="cy" 
 pDroppable="node" (onDrop)="drop($event)">

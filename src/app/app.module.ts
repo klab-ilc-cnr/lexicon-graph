@@ -31,7 +31,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CytoscapeGraphComponent } from './cytoscape-graph/cytoscape-graph.component';
 import { TreeComponent } from './tree/tree.component';
 import { ResizeDirective } from './resize.directive';
-
+import { ToolbarComponent } from './cytoscape-graph/toolbar/toolbar.component';
+import { faRoute, faChevronDown, faChevronUp, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { ResizeDirective } from './resize.directive';
     SidebarComponent,
     CytoscapeGraphComponent,
     TreeComponent,
-    ResizeDirective
+    ResizeDirective,
+    ToolbarComponent
   ],
   imports: [
     BrowserModule,
@@ -74,6 +76,10 @@ import { ResizeDirective } from './resize.directive';
 
 export class AppModule {
   constructor(library: FaIconLibrary) {
-
+    library.addIcons(
+      faRoute,
+      faChevronDown,
+      faChevronUp,
+      faTriangleExclamation);
   }
 }

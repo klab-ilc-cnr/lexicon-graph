@@ -23,6 +23,8 @@ export class ViewportComponent implements OnInit {
   width: number;
   height: number;
 
+  resetEventsSubject: Subject<boolean> = new Subject();
+
   ngOnInit(): void {
   }
 
@@ -47,11 +49,13 @@ export class ViewportComponent implements OnInit {
   }
 
   resetGraph($event) {
+    this.resetEventsSubject.next($event);
     // se evento ricevuto da sidebar c è true, chiamo servizio in cytoscape c per resettare view
-    if ($event === true) {
-      this.istanzaCyComponent.resetView();
-      this.istanzaCyComponent.isChecked = false;
-    }
+    // if ($event === true) {
+    //   this.istanzaToolBarComponent.resetView();
+    //   this.istanzaToolBarComponent.isChecked = false;
+    //   this.istanzaCyComponent.isChecked = false;
+    // }
   }
 
   expandedSidebar() {
@@ -59,8 +63,14 @@ export class ViewportComponent implements OnInit {
     let left = document.getElementById('first');
     let right = document.getElementById('second');
     if (this.expanded === false) {
+      console.log('clicked chiudi')
+      left.style.flex = `0 5 0`;
+      right.style.flex = `0 5 100%`;
+
+    } else {
+      console.log('clicked aperto')
       left.style.flex = `0 5 25%`;
-      right.style.flex = `0 5 75%`
+      right.style.flex = `0 5 75%`;
     }
   }
   /**

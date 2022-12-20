@@ -1,6 +1,6 @@
 <div class="main-layout">
     <div id="lateralColumn">
-        <button id="button-sidebar" (click)="expandedSidebar()" mat-icon-button>
+        <button id="button-sidebar" (click)="expandedSidebar()">
             <i class="pi pi-bars"></i>
         </button>
     </div>
@@ -36,6 +36,7 @@
       id="second"
       style="overflow: hidden;">
      <app-cytoscape-graph
+     [events]="resetEventsSubject"
       [parentNode]="parentReceived"
       [senseNode]="senseReceived"
       [formNode]="formReceived"

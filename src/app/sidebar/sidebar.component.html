@@ -11,10 +11,26 @@
             <!-- <i class="pi pi-spin pi-spinner" *ngIf="isLoading"></i> -->
             <input type="text" pInputText formControlName="entrataLessicale">
           </span>
-          <button pTooltip="show/hide filter" tooltipPosition="bottom" type="button" pButton pRipple
-            icon="pi pi-filter-fill" (click)="showFilter()"></button>
-          <button pTooltip="refresh form" tooltipPosition="bottom" id="btnIcon" type="button" pButton pRipple
-            icon="pi pi-refresh" (click)="resetFilter()"></button>
+          <button 
+          pTooltip="show/hide filter" 
+          tooltipPosition="bottom" 
+          type="button" 
+          pButton 
+          pRipple
+          icon="pi pi-filter-fill" 
+          id="filterIcon"
+          (click)="showFilter()"
+          ></button>
+          <button 
+          pTooltip="refresh form" 
+          tooltipPosition="bottom" 
+          id="btnIcon" 
+          type="button" 
+          pButton 
+          pRipple
+          icon="pi pi-refresh" 
+          (click)="resetFilter()"
+          ></button>
         </div>
         <small [style.font-size]="fontInput" ><b>LEXICAL ENTRIES:</b></small> <small [style.font-size]="fontInput"> {{totalCount}}</small><br>
         <ng-container>

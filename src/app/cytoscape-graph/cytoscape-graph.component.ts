@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import cytoscape from 'cytoscape';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
 import { AddNodoService } from './servizi/add-nodo.service';
@@ -7,10 +7,13 @@ import popper from 'cytoscape-popper';
 import { DistanceService } from './servizi/distance.service';
 import dblclick from 'cytoscape-dblclick';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 cytoscape.use(dblclick);
 var nodeHtmlLabel = require('cytoscape-node-html-label');
 nodeHtmlLabel(cytoscape); // register extension
+import cola from 'cytoscape-cola';
+cytoscape.use(cola);
 cytoscape.use(popper);
 @Component({
   selector: 'app-cytoscape-graph',
@@ -28,15 +31,44 @@ export class CytoscapeGraphComponent implements OnInit {
   @Input() senseNode: TreeNodeCustom;
   @Input() formNode: TreeNodeCustom;
   @Input() draggedNode: TreeNodeCustom;
+  @ViewChild(ToolbarComponent, { static: true }) istanzaToolBarComponent: ToolbarComponent;
 
+  _val: Subject<boolean> = new Subject();
+  @Input()
+  set events(val: Subject<boolean>) {
+    this._val = val;
+  }
+
+  private eventsSubscription: Subscription;
+
+  /**
+   * array elementi lessico 
+   */
   parentNodeElements: any = [];
   senseNodeElements: any = [];
   formNodeElements: any = [];
 
-  isChecked: boolean;
-
+  /**
+   * sensi salvati per recupero percorso minimimo
+   */
+  senso1;
+  senso2;
   definitionSplitted: string;
+
+  expanded: boolean = false;
+
+  /**
+ * variabile per tenere traccia di un eventuale errore o warning nella chiamata http dal componente toolbar
+ */
+  error: null;
+  warning: null;
+
   ngOnInit(): void {
+    this.eventsSubscription = this._val.subscribe((x) => {
+      if (x === true) {
+        this.istanzaToolBarComponent.resetView();
+      }
+    });
     sessionStorage.removeItem('focusNode');
     const that = this;
     this.cy = cytoscape({
@@ -75,12 +107,12 @@ export class CytoscapeGraphComponent implements OnInit {
         valignBox: "bottom",
         tpl: function (data) {
           return '<div> <p style="margin-bottom: 0.5rem; text-align:center;"><strong><em>' + data.lemma + '<sub>' + data.pos + '</sub></em></strong></p>' +
-            '<p style="text-align:center; font-size:18px; ">' + data.definitionSplitt + '</p></div>';
+            '<p style="text-align:center; font-size:18px;">' + data.definitionSplitt + '</p></div>';
         }
       }
     ]);
 
-    this.isChecked = false;
+    this.istanzaToolBarComponent.isChecked = false;
     this.cy.removeListener('mouseover', 'node.sense,node.senseLabel');
     this.cy.on('mouseover', 'node.sense,node.senseLabel', (event) => {
       if (event.target.data().definition.length > 20) {
@@ -96,7 +128,7 @@ export class CytoscapeGraphComponent implements OnInit {
             return content;
           },
           popper: {
-            placement: 'top',
+            placement: 'bottom',
           }
         });
       }
@@ -232,17 +264,20 @@ export class CytoscapeGraphComponent implements OnInit {
    * @param evt drop: aggiungo il nodo in base alle informazioni recuperate dal componente tree
    */
   drop(evt) {
+    // resetto zoom viewport
+    this.cy.zoom(1);
     sessionStorage.removeItem('focusNode');
     // coordinate del mouse per posizionamento nodo
     var pos = {
       x: evt.layerX, y: evt.layerY
     };
+    let senseAdded: [];
     if (this.draggedNode.type === 'parentLevel') {
       this.parentNodeElements.push(this.parentNode);
       this.addElement.addNodo(this.cy, this.parentNode.data, this.parentNode.label, pos, this.parentNode.type, this.parentNode.pos);
       this.cy.getElementById(this.parentNode.data).addClass('border')
       this.cy.getElementById(this.parentNode.data).addClass('lexicalEntry');
-      if (this.isChecked === false) {
+      if (this.istanzaToolBarComponent.isChecked === false) {
         this.cy.getElementById(this.parentNode.data).removeClass('lexicalEntry');
         this.cy.getElementById(this.parentNode.data).addClass('lexicalEntryLabel');
         // this.cy.getElementById(this.parentNode.data).style('label', this.parentNode.label);
@@ -250,15 +285,19 @@ export class CytoscapeGraphComponent implements OnInit {
     }
     if (this.draggedNode.type === 'childS2L') {
       this.senseNodeElements.push(this.senseNode);
+      for (var i = 0; i < this.senseNodeElements.length; i++) {
+        this.senso1 = this.senseNodeElements[0];
+        this.senso2 = this.senseNodeElements[1];
+      }
       if (this.senseNode.definition.split(" ").length > 3) {
         this.definitionSplitted = this.senseNode.definition.split(' ').slice(0, 3).join(' ') + '...'
       } else {
         this.definitionSplitted = this.senseNode.definition;
       }
-      this.addElement.addNodo(this.cy, this.senseNode.senseInstanceName, this.senseNode.label, pos, this.senseNode.type, this.senseNode.pos, this.senseNode.lexicalEntryInstanceName, this.senseNode.lemma, this.senseNode.definition, this.definitionSplitted);
+      senseAdded = this.addElement.addNodo(this.cy, this.senseNode.senseInstanceName, this.senseNode.label, pos, this.senseNode.type, this.senseNode.pos, this.senseNode.lexicalEntryInstanceName, this.senseNode.lemma, this.senseNode.definition, this.definitionSplitted);
       this.cy.getElementById(this.senseNode.senseInstanceName).addClass('border')
       this.cy.getElementById(this.senseNode.senseInstanceName).addClass('sense');
-      if (this.isChecked === false) {
+      if (this.istanzaToolBarComponent.isChecked === false) {
         this.cy.getElementById(this.senseNode.senseInstanceName).removeClass('sense');
         this.cy.getElementById(this.senseNode.senseInstanceName).addClass('senseLabel');
       }
@@ -268,7 +307,7 @@ export class CytoscapeGraphComponent implements OnInit {
       this.addElement.addNodo(this.cy, this.formNode.formInstanceName, this.formNode.formInstanceName, pos, this.formNode.type);
       this.cy.getElementById(this.formNode.formInstanceName).addClass('border')
       this.cy.getElementById(this.formNode.formInstanceName).addClass('form');
-      if (this.isChecked === false) {
+      if (this.istanzaToolBarComponent.isChecked === false) {
         this.cy.getElementById(this.formNode.formInstanceName).style('label', this.formNode.label);
       }
     }
@@ -287,67 +326,55 @@ export class CytoscapeGraphComponent implements OnInit {
         return;
       }
     });
+    let lastAddedSense;
+    senseAdded.forEach(senso => {
+      lastAddedSense = senso;
+      return lastAddedSense;
+    })
     // chiamo servizio distanza se sono presenti due sensi nel viewport
-    if (sensiVisibili.length === 2) {
+    if (sensiVisibili.length >= 2) {
+      // abilito btn per recuperare min path
+      this.istanzaToolBarComponent.disableMinPath = false;
       for (var i = 0; i < sensiVisibili.length; i++) {
         // recupero iponimi
-        this.calculateDistance.levelOne(this.cy, sensiVisibili[0].data().id, sensiVisibili[1].data().id, 'hyponym', 'incoming');
+        this.calculateDistance.levelOne(this.cy, sensiVisibili[i].data().id, lastAddedSense.data().id, 'hyponym', 'incoming');
         // recupero iperonimi
-        this.calculateDistance.levelOne(this.cy, sensiVisibili[0].data().id, sensiVisibili[1].data().id, 'hyponym', 'outgoing');
+        this.calculateDistance.levelOne(this.cy, sensiVisibili[i].data().id, lastAddedSense.data().id, 'hyponym', 'outgoing');
         // recupero meronimi
-        this.calculateDistance.levelOne(this.cy, sensiVisibili[0].data().id, sensiVisibili[1].data().id, 'partMeronym', 'incoming');
+        this.calculateDistance.levelOne(this.cy, sensiVisibili[i].data().id, lastAddedSense.data().id, 'partMeronym', 'incoming');
         // recupero olonimi
-        this.calculateDistance.levelOne(this.cy, sensiVisibili[0].data().id, sensiVisibili[1].data().id, 'partMeronym', 'outgoing');
+        this.calculateDistance.levelOne(this.cy, sensiVisibili[i].data().id, lastAddedSense.data().id, 'partMeronym', 'outgoing');
         // recupero sinonimi entranti
-        this.calculateDistance.levelOne(this.cy, sensiVisibili[0].data().id, sensiVisibili[1].data().id, 'synonym', 'incoming');
+        this.calculateDistance.levelOne(this.cy, sensiVisibili[i].data().id, lastAddedSense.data().id, 'synonym', 'incoming');
         // recupero sinonimi uscenti
-        this.calculateDistance.levelOne(this.cy, sensiVisibili[0].data().id, sensiVisibili[1].data().id, 'synonym', 'outgoing');
+        this.calculateDistance.levelOne(this.cy, sensiVisibili[i].data().id, lastAddedSense.data().id, 'synonym', 'outgoing');
       }
+    }
+  }
+  expandedToolbar() {
+    this.expanded = !this.expanded;
+  }
+
+  resetFromToolbar(evt) {
+    if (evt === true) {
+      this.expanded = false;
+      this.senseNodeElements = [];
     }
   }
 
   /**
-   * resetta il viewport e il toggle label/id
+   * metodo che mostra il messaggio di errore 
+   * @param evt errore ricevuto da componente toolbar quando c'è chiamata a servizio per recuperare percorso minimo
    */
-  resetView() {
-    // this.cy.elements().style('display', 'none');
-    this.cy.remove(this.cy.elements());
-    // this.cy.destroy();
-    this.isChecked = false;
+  errorFromToolbar(evt) {
+    this.error = evt;
   }
 
   /**
-   * 
-   * @param event checked event dello switch per visualizzare come label l'id o il valore della label visibile nel tree DA COMPLETARE
-   */
-  labelOrId(event) {
-    this.isChecked = event.checked;
-    if (event.checked === false) {
-      for (var i = 0; i < this.parentNodeElements.length; i++) {
-        this.cy.getElementById(this.parentNodeElements[i].data).removeClass('lexicalEntry');
-        this.cy.getElementById(this.parentNodeElements[i].data).addClass('lexicalEntryLabel');
-      }
-      for (var i = 0; i < this.senseNodeElements.length; i++) {
-        this.cy.getElementById(this.senseNodeElements[i].senseInstanceName).removeClass('sense');
-        this.cy.getElementById(this.senseNodeElements[i].senseInstanceName).addClass('senseLabel');
-      }
-      for (var i = 0; i < this.formNodeElements.length; i++) {
-        this.cy.getElementById(this.formNodeElements[i].formInstanceName).style('label', this.formNodeElements[i].label);
-      }
-    } else {
-      for (var i = 0; i < this.parentNodeElements.length; i++) {
-        // this.cy.getElementById(this.parentNodeElements[i].data).style('label', this.parentNodeElements[i].data);
-        this.cy.getElementById(this.parentNodeElements[i].data).removeClass('lexicalEntryLabel');
-        this.cy.getElementById(this.parentNodeElements[i].data).addClass('lexicalEntry');
-      }
-      for (var i = 0; i < this.senseNodeElements.length; i++) {
-        // this.cy.getElementById(this.senseNodeElements[i].senseInstanceName).style('label', this.senseNodeElements[i].senseInstanceName);
-        this.cy.getElementById(this.senseNodeElements[i].senseInstanceName).removeClass('senseLabel');
-        this.cy.getElementById(this.senseNodeElements[i].senseInstanceName).addClass('sense');
-      }
-      for (var i = 0; i < this.formNodeElements.length; i++) {
-        this.cy.getElementById(this.formNodeElements[i].formInstanceName).style('label', this.formNodeElements[i].formInstanceName);
-      }
-    }
+  * metodo che mostra il messaggio di errore 
+  * @param evt errore ricevuto da componente toolbar quando c'è chiamata a servizio per recuperare percorso minimo
+  */
+  warningFromToolbar(evt) {
+    this.warning = evt;
   }
 }

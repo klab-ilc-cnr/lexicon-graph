@@ -1,0 +1,60 @@
+
+<div>
+  <button 
+  pTooltip="refresh view" 
+  tooltipPosition="bottom"
+  type="button" 
+  pButton 
+  pRipple 
+  icon="pi pi-refresh"
+  (click)="resetView()"></button>
+  <button
+   pButton 
+   pRipple 
+   type="button" 
+   label="laber or id" 
+   class="p-button-outlined">
+    <p-inputSwitch
+    (onChange)="labelOrId($event)"
+    [(ngModel)]="isChecked"
+  ></p-inputSwitch>
+  </button>
+    <button
+    [disabled]="disableMinPath"
+    pTooltip="minimium path" 
+    tooltipPosition="bottom"
+    type="button" 
+    pButton 
+    (click)="minPath()">
+      <fa-icon icon="route"></fa-icon>
+    </button>
+    <button 
+    pButton 
+    pRipple 
+    type="button" 
+    label="inferred" 
+    class="p-button-outlined"
+    [disabled]="disableBtn">
+    <p-inputSwitch
+    (onChange)="inferences($event)"
+    [(ngModel)]="retrieveInferences"
+    [disabled]="disableBtn"
+  ></p-inputSwitch>
+  </button>
+  <button 
+    pButton 
+    pRipple 
+    type="button" 
+    label="concepts" 
+    class="p-button-outlined"
+    [disabled]="disableBtn">
+    <p-inputSwitch
+    [disabled]="disableBtn"
+    (onChange)="concepts($event)"
+    [(ngModel)]="retrieveConcepts"
+  ></p-inputSwitch>
+  </button>
+
+
+</div>
+

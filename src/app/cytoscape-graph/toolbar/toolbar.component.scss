@@ -1,0 +1,33 @@
+.p-button{
+    background-color: #80808000;
+    color: black;
+    border-color: rgb(203 205 210);
+    padding: 5px!important;
+    margin-right: 10px;
+    height: 45px
+    // margin: 0 0 12px 0!important;
+}
+
+.p-button:enabled:hover{
+    background-color: rgb(89 94 107 / 17%);
+    color: black;
+    border-color: rgb(61 115 231 / 0%);
+}
+
+.p-button-outlined{
+    background-color: transparent;
+ 
+}
+
+.p-button-outlined:enabled:hover{
+    background-color: transparent;
+    border-color: rgb(203 205 210);
+}
+
+::ng-deep.p-inputswitch.p-component{
+    top: 10px!important;
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+    background: #3d73e72b;
+}

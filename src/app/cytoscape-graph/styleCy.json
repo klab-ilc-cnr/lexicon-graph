@@ -72,5 +72,42 @@
       "text-opacity":1,
       "text-background-opacity": 0
     }
+  },
+  {
+    "selector": "edge.iponimi",
+    "style": {
+      "line-color": "#02768C",
+      "target-arrow-color": "#02768C",
+      "line-style": "solid",
+      "opacity": 0.5
+    }
+  },
+  {
+    "selector": "edge.meronimi",
+    "style": {
+      "line-color": "#E49D00",
+      "target-arrow-color": "#E49D00",
+      "line-style": "solid",
+      "opacity": 0.5
+    }
+  },
+  {
+    "selector": "edge.sinonimi",
+    "style": {
+      "line-color": "#720040",
+      "target-arrow-color": "#720040",
+      "line-style": "solid",
+      "opacity": 0.5,
+      "curve-style": "bezier"
+    }
+  },
+  {
+    "selector": "edge.inferred",
+    "style": {
+      "line-color": "grey",
+      "target-arrow-color": "grey",
+      "line-style": "dashed",
+      "curve-style": "bezier"
+    }
   }
 ]

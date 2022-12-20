@@ -87,7 +87,7 @@ export class TreeComponent implements OnInit, OnDestroy {
   formExpanded: boolean = false;
 
   /**
-   * event emitte per inviare parent node , form node e sense node
+   * event emitter per inviare parent node , form node e sense node
    */
   @Output() invioNodoParent = new EventEmitter<any>();
   @Output() invioNodoForm = new EventEmitter<any>();
@@ -106,7 +106,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     this.retrieveSenses();
     this.eventsSubscription = this._val.subscribe((x) => {
       if (x === true) {
-        console.log('reset btn clicked')
+        // console.log('reset btn clicked')
         this.sensesFromLexo.forEach(el => {
           this.expandRecursive(el, false);
         });

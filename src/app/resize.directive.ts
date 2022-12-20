@@ -29,8 +29,11 @@ export class ResizeDirective {
   @HostListener('window:mousemove', ['$event']) onMouseMove(event: MouseEvent) {
     // resetto dimensione sidebar al clic su icona expanded
     if (this.expanded === false) {
-      this.leftElement.style.flex = `0 5 25%`;
-      this.rightElement.style.flex = `0 5 75%`
+      this.leftElement.style.flex = `0 5 0%`;
+      this.rightElement.style.flex = `0 5 100%`
+    } else {
+      // this.leftElement.style.flex = `0 5 0`;
+      // this.rightElement.style.flex = `0 5 100%`
     }
     if (this.grabber) {
       event.preventDefault();
