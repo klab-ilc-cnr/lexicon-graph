@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import cytoscape from 'cytoscape';
 import { TreeNodeCustom } from '../shared/models/tree-node-custom.model';
-import { AddNodoService } from './servizi/add-nodo.service';
+import { AddNodoService } from './servizi/aggiungiNodo/add-nodo.service';
 import styleCy from './styleCy.json'
 import popper from 'cytoscape-popper';
-import { DistanceService } from './servizi/distance.service';
+import { DistanceService } from './servizi/calcolaDistanza/distance.service';
 import dblclick from 'cytoscape-dblclick';
 import { DataStorageService } from '../shared/data-storage/data-storage.service';
 import { Subject, Subscription } from 'rxjs';

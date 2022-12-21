@@ -1,6 +1,6 @@
-<div style="border: 1px solid #dbdbdb;">
+<div style="border: 1px solid #dbdbdb;height: 58px;">
   <button 
-  style="width: 58px;"
+  style="width: 58px;margin: 3px;"
   tooltipPosition="bottom"
   type="button"
   pButton 
@@ -13,7 +13,8 @@
 </div>
 <div 
 [ngStyle]="{'display': expanded === true ? 'block': 'none'}"
-id="toolbar">
+id="toolbar"
+style="height: 58px;">
   <app-toolbar
   (resetEvent)="resetFromToolbar($event)"
   (errorEmitter)="errorFromToolbar($event)"

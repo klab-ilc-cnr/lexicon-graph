@@ -47,9 +47,9 @@
     type="button" 
     label="concepts" 
     class="p-button-outlined"
-    [disabled]="disableBtn">
+    [disabled]="disableBtnConcept">
     <p-inputSwitch
-    [disabled]="disableBtn"
+    [disabled]="disableBtnConcept"
     (onChange)="concepts($event)"
     [(ngModel)]="retrieveConcepts"
   ></p-inputSwitch>
