@@ -115,31 +115,38 @@ export class CytoscapeGraphComponent implements OnInit {
     this.istanzaToolBarComponent.isChecked = false;
     this.cy.removeListener('mouseover', 'node.sense,node.senseLabel');
     this.cy.on('mouseover', 'node.sense,node.senseLabel', (event) => {
-      if (event.target.data().definition.length > 20) {
-        event.target.popperRefObj = event.target.popper({
-          content: () => {
-            var content = document.createElement("div-popper");
-            content.innerHTML = event.target.data().definition;
-            var x = document.createElement("style");
-            var t = document.createTextNode("div-popper{background-color: #f6f8fa;color: black;border: 1px solid  #c4c8cc;border-radius: 5px;font-size:small;padding:10px;width:200px;}");
-            x.appendChild(t);
-            document.head.appendChild(x);
-            document.body.appendChild(content);
-            return content;
-          },
-          popper: {
-            placement: 'bottom',
-          }
-        });
+      // toglie errore in console
+      if (event.target.data().definition !== undefined) {
+        if (event.target.data().definition.length > 20) {
+          event.target.popperRefObj = event.target.popper({
+            content: () => {
+              var content = document.createElement("div-popper");
+              content.innerHTML = event.target.data().definition;
+              var x = document.createElement("style");
+              var t = document.createTextNode("div-popper{background-color: #f6f8fa;color: black;border: 1px solid  #c4c8cc;border-radius: 5px;font-size:small;padding:10px;width:200px;}");
+              x.appendChild(t);
+              document.head.appendChild(x);
+              document.body.appendChild(content);
+              return content;
+            },
+            popper: {
+              placement: 'bottom',
+            }
+          });
+        }
       }
+
     });
 
     this.cy.removeListener('mouseout', 'node.sense,node.senseLabel');
     this.cy.on('mouseout', 'node.sense,node.senseLabel', (event) => {
-      if (event.target.data().definition.length > 20) {
-        if (event.target.popper) {
-          event.target.popperRefObj.state.elements.popper.remove();
-          event.target.popperRefObj.destroy();
+      // toglie errore in console
+      if (event.target.data().definition !== undefined) {
+        if (event.target.data().definition.length > 20) {
+          if (event.target.popper) {
+            event.target.popperRefObj.state.elements.popper.remove();
+            event.target.popperRefObj.destroy();
+          }
         }
       }
     });
@@ -327,10 +334,14 @@ export class CytoscapeGraphComponent implements OnInit {
       }
     });
     let lastAddedSense;
-    senseAdded.forEach(senso => {
-      lastAddedSense = senso;
-      return lastAddedSense;
-    })
+    // toglie errore in console
+    if (senseAdded !== undefined) {
+      senseAdded.forEach(senso => {
+        lastAddedSense = senso;
+        return lastAddedSense;
+      })
+    }
+
     // chiamo servizio distanza se sono presenti due sensi nel viewport
     if (sensiVisibili.length >= 2) {
       // abilito btn per recuperare min path
